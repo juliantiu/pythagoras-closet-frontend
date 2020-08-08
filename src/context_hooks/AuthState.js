@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext, useContext } from 'react';
+import React, { useEffect, useState, createContext, useContext, useCallback } from 'react';
 import app from '../firebase';
 
 export const AuthContext = createContext();
@@ -10,10 +10,16 @@ export const AuthProvider = ({ children }) => {
     app.auth().onAuthStateChanged(setCurrentUser);
   }, []);
 
+  const logout = useCallback(
+    () => app.auth().signOut(),
+    []
+  );
+
   return (
     <AuthContext.Provider
       value={{
-        currentUser
+        currentUser,
+        logout
       }}
     >
       {children}

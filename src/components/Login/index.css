@@ -1,0 +1,40 @@
+.login-image {
+  background-image: url("../../assets/img/closet-1.jpg"); /* The image used */
+  background-color: #cccccc; /* Used if the image is unavailable */
+  /* height: 500px; You must set a specified height */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+}
+
+.font {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.5rem;
+}
+
+.dark-filter {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: #000;
+  opacity: .2;
+}
+
+.login-card-header {
+  background-color: #000 !important;
+  color: #FFF;
+  display: flex;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.login-error-message {
+  color: red !important;
+}
+
+@media (min-width: 992px) {
+  .login-card {
+    height: 100%;
+  }
+}
