@@ -1,14 +1,79 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { useAuthState } from '../../../../../context_hooks/AuthState';
+import { useCategoryState } from '../../../../../context_hooks/CategoryState';
+import { useSubcategoryState } from '../../../../../context_hooks/SubcategoryState';
 
 function AddSubcategoryModalForm(props) {
-  const { showModal, onHideModal } = props;
+  const { showModal, onHideModal, categories } = props;
+  const { currentUser } = useAuthState();
+  const { subcategories } = useSubcategoryState();
+  const { addSubcategory } = useSubcategoryState();
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [subcategoryName, setSubcategoryName] = useState('');
+  const [existingSubcategory, setExistingSubcategory] = useState(false);
+
+  useEffect(
+    () => {
+      if (categories === undefined || categories.length === 0) return;
+      setSelectedCategory(categories[0].id)
+    },
+    [setSelectedCategory, categories]
+  );
 
   const onSave = useCallback(
     () => {
+      addSubcategory(currentUser.uid, selectedCategory, subcategoryName);
+      setSubcategoryName('');
       onHideModal();
     },
-    [onHideModal]
+    [onHideModal, addSubcategory, currentUser, selectedCategory, subcategoryName, setSubcategoryName]
+  );
+
+  const onCancel = useCallback(
+    () => {
+      setSubcategoryName('');
+      setExistingSubcategory(false);
+      onHideModal();
+    },
+    [onHideModal, setSubcategoryName, setExistingSubcategory]
+  )
+
+  const categoryOptions = useMemo(
+    () => {
+      return categories.map(category => <option key={`add-subcategory-options-${category.id}`} value={category.id}>{category.name}</option>);
+    },
+    [categories]
+  );
+
+  const categoryLookup = useMemo(
+    () => {
+      return categories.reduce(
+        (categoryLookup, category) => {
+          return categoryLookup.set(category.id, subcategories.filter(subcategory => subcategory.categoryId === category.id).map(sub => sub.name));
+        },
+        new Map()
+      );
+    },
+    [categories, subcategories]
+  );
+
+  const onCategoryChange = useCallback(
+    (event) => {
+      const { value } = event.target;
+      setSelectedCategory(value);
+    },
+    [setSelectedCategory]
+  );
+
+  const onSubcategoryChange = useCallback(
+    (event) => {
+      const { value } = event.target;
+      if ((categoryLookup.get(selectedCategory) ?? []).includes(value)) setExistingSubcategory(true);
+      else setExistingSubcategory(false);
+      setSubcategoryName(value);
+    },
+    [setSubcategoryName, setExistingSubcategory, categoryLookup, selectedCategory]
   );
 
   return (
@@ -26,14 +91,23 @@ function AddSubcategoryModalForm(props) {
       <Modal.Body>
         <Form>
           <Form.Group>
+            <Form.Label>Category</Form.Label>
+            <Form.Control as="select" onChange={onCategoryChange} value={selectedCategory}>
+              {categoryOptions}
+            </Form.Control>
+          </Form.Group>
+          <Form.Group>
             <Form.Label>Subcategory Name</Form.Label>
-            <Form.Control type="text" />
+            <Form.Control type="text" value={subcategoryName} onChange={onSubcategoryChange} isInvalid={existingSubcategory}/>
+            <Form.Control.Feedback type="invalid">
+              Originality at its finest
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHideModal}>Close</Button>
-        <Button onClick={onSave}>Save</Button>
+        <Button onClick={onCancel}>Cancel</Button>
+        <Button onClick={onSave} disabled={existingSubcategory || selectedCategory === ''}>Save</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -41,6 +115,7 @@ function AddSubcategoryModalForm(props) {
 
 export default function AddSubcategoryModal() {
   const [showModal, setShowModal] = useState(false);
+  const { categories } = useCategoryState();
 
   const onShowModal = useCallback(
     () => {
@@ -58,8 +133,8 @@ export default function AddSubcategoryModal() {
 
   return (
     <>
-      <AddSubcategoryModalForm showModal={showModal} onHideModal={onHideModal}/>
-      <Button className="w-100" variant="dark" onClick={onShowModal}>Add Subcategory</Button>
+      <AddSubcategoryModalForm showModal={showModal} onHideModal={onHideModal} categories={categories}/>
+      <Button className="w-100" variant="dark" onClick={onShowModal} disabled={categories.length === 0}>Add Subcategory</Button>
     </>
   );
 }

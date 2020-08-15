@@ -19,7 +19,7 @@ const newCategoryURL = `${hostname}/${newCategoryURI}`;
 export const CategoryContext = createContext([]);
 
 export const CategoryProvider = ({ children }) => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(undefined);
 
   // get categories
   const getCategories = useCallback(
@@ -55,7 +55,7 @@ export const CategoryProvider = ({ children }) => {
           name,
         })
       })
-      .then(() => getCategories())
+      .then(() => getCategories(uid))
       .catch(() => { alert('Failed to add category'); });
     },
     [getCategories]

@@ -10,8 +10,6 @@ function AddCategoryModalForm(props) {
   const [name, setName] = useState('');
   const [existingCategory, setExistingCategory] = useState(false);
 
-  console.log(categories);
-
   const categoryNamesLookup = useMemo(
     () => {
       return (categories ?? []).reduce(
@@ -27,9 +25,19 @@ function AddCategoryModalForm(props) {
   const onSave = useCallback(
     async () => {
       await addCategory(currentUser.uid, name);
+      setName('');
       onHideModal();
     },
-    [onHideModal, addCategory, currentUser, name]
+    [onHideModal, addCategory, currentUser, name, setName]
+  );
+
+  const onCancel = useCallback(
+    () => {
+      setName('');
+      setExistingCategory(false);
+      onHideModal();
+    },
+    [setName, setExistingCategory, onHideModal]
   );
 
   const onChange = useCallback(
@@ -65,7 +73,7 @@ function AddCategoryModalForm(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHideModal}>Close</Button>
+        <Button onClick={onCancel}>Cancel</Button>
         <Button onClick={onSave} disabled={existingCategory}>Save</Button>
       </Modal.Footer>
     </Modal>

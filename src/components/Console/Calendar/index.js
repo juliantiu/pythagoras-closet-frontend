@@ -5,12 +5,14 @@ import '../../../assets/css/style.css';
 import ActionButtonsAccordion from './ActionButtonsAccordion';
 import { CategoryProvider, useCategoryState } from '../../../context_hooks/CategoryState';
 import { useAuthState } from '../../../context_hooks/AuthState';
+import { SubcategoryProvider, useSubcategoryState } from '../../../context_hooks/SubcategoryState';
 
 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 function Body() {
-  const { getCategories } = useCategoryState();
   const { currentUser } = useAuthState();
+  const { categories, getCategories } = useCategoryState();
+  const { subcategories, getSubcategories } = useSubcategoryState();
   
   useEffect(
     () => {
@@ -18,6 +20,23 @@ function Body() {
     },
     [getCategories, currentUser]
   );
+
+  useEffect(
+    () => {
+      getSubcategories(currentUser.uid);
+    },
+    [getSubcategories, currentUser]
+  );
+
+  if (categories === undefined || subcategories === undefined) {
+    return (
+      <Row>
+        <Col xs={12}>
+          Loading...
+        </Col>
+      </Row>
+    )
+  }
 
   return (
     <Container fluid>
@@ -42,7 +61,9 @@ function Body() {
 export default function Calendar() {
   return (
     <CategoryProvider>
+    <SubcategoryProvider>
       <Body />
+    </SubcategoryProvider>
     </CategoryProvider>
   );
 }
