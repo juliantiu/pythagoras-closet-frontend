@@ -1,0 +1,16 @@
+.chart {
+  width: 100%;
+  overflow-x: scroll;
+}
+
+.column-labels-container {
+  min-width: 656.25px;
+}
+
+.column-labels-container > div {
+  min-width: 93.75px;
+  width: 14.28%;
+  border-right: 1px solid black;
+  display: inline-flex;
+  justify-content: center;
+}

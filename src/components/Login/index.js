@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuthState } from '../../context_hooks/AuthState'
 import app from "../../firebase";
 import './index.css';
+import '../../assets/css/style.css';
 import { Container, Row, Col, Card, Form, InputGroup, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
@@ -81,11 +82,11 @@ const Login = ({ history }) => {
         <Col sm={12} lg={3} className="d-flex justify-content-center align-items-center py-lg-0 px-lg-0 login-image">
           <div className="dark-filter"/>
           <Card className="login-card w-100 border-0 rounded-0">
-            <Card.Header className="login-card-header rounded-0 font">Pythagora's Closet</Card.Header>
+            <Card.Header className="login-card-header rounded-0 font-1">Pythagora's Closet</Card.Header>
             <Card.Body>
               <Form noValidate>
                 <Form.Group>
-                  <Form.Label className="font">Email</Form.Label>
+                  <Form.Label>Email</Form.Label>
                   <InputGroup>
                   <InputGroup.Prepend><InputGroup.Text>@</InputGroup.Text></InputGroup.Prepend>
                     <Form.Control name="email" type="email" value={email} onChange={handleChange} required/>
@@ -93,7 +94,7 @@ const Login = ({ history }) => {
                   <Form.Text as="small" className="login-error-message">{errorMessage.email}</Form.Text>
                 </Form.Group>
                 <Form.Group>
-                  <Form.Label className="font">Password</Form.Label>
+                  <Form.Label>Password</Form.Label>
                   <InputGroup>
                     {passwordField}
                   </InputGroup>
@@ -107,7 +108,7 @@ const Login = ({ history }) => {
               </Row>
             </Card.Body>
             <Card.Footer className="text-right rounded-0">
-              <Button variant="dark" onClick={handleLogin} className="font">Login</Button>
+              <Button variant="dark" onClick={handleLogin} className="font-1">Login</Button>
             </Card.Footer>
           </Card>
         </Col>

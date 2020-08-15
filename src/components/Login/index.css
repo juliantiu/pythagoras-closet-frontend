@@ -7,11 +7,6 @@
   background-size: cover; /* Resize the background image to cover the entire container */
 }
 
-.font {
-  font-family: 'Dancing Script', cursive;
-  font-size: 1.5rem;
-}
-
 .dark-filter {
   position: absolute;
   height: 100%;

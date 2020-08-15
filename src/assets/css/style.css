@@ -1,0 +1,39 @@
+/* .font-1 {
+  font-family: 'Dancing Script', cursive;
+} */
+
+.font-size-1 {
+  font-size: xx-small !important;
+}
+
+.font-size-2 {
+  font-size: x-small !important;
+}
+
+.font-size-3 {
+  font-size: smaller !important;
+}
+
+.font-size-4 {
+  font-size: small !important;
+}
+
+.font-size-5 {
+  font-size: medium !important;
+}
+
+.font-size-6 {
+  font-size: large !important;
+}
+
+.font-size-7 {
+  font-size: larger !important;
+}
+
+.font-size-8 {
+  font-size: x-large !important;
+}
+
+.font-size-9 {
+  font-size: xx-large !important;
+}
