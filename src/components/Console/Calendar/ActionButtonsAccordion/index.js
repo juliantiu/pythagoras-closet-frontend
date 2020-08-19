@@ -6,6 +6,7 @@ import DeleteCategoryModal from './DeleteCategoryModal';
 import AddSubcategoryModal from './AddSubcategoryModal';
 import UpdateSubcategoryModal from './UpdateSubcategoryModal';
 import DeleteSubcategoryModal from './DeleteSubcategoryModal';
+import AddClothingModal from './AddClothingModal';
 
 export default function ActionButtonsAccordion() {
   return (
@@ -27,6 +28,9 @@ export default function ActionButtonsAccordion() {
                   <AddSubcategoryModal />
                   <UpdateSubcategoryModal />
                   <DeleteSubcategoryModal />
+                </ButtonGroup>
+                <ButtonGroup className="d-flex mt-2 w-100">
+                  <AddClothingModal />
                 </ButtonGroup>
             </ButtonToolbar>
           </Accordion.Collapse>

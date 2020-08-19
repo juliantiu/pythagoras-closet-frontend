@@ -8,8 +8,7 @@
 }
 
 .column-labels-container > div {
-  min-width: 93.75px;
-  width: 14.28%;
+  min-width: 90px;
   border-right: 1px solid black;
   display: inline-flex;
   justify-content: center;

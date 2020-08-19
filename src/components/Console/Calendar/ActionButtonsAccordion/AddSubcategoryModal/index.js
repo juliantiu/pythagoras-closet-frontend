@@ -7,8 +7,7 @@ import { useSubcategoryState } from '../../../../../context_hooks/SubcategorySta
 function AddSubcategoryModalForm(props) {
   const { showModal, onHideModal, categories } = props;
   const { currentUser } = useAuthState();
-  const { subcategories } = useSubcategoryState();
-  const { addSubcategory } = useSubcategoryState();
+  const { subcategories, addSubcategory } = useSubcategoryState();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [subcategoryName, setSubcategoryName] = useState('');
   const [existingSubcategory, setExistingSubcategory] = useState(false);
