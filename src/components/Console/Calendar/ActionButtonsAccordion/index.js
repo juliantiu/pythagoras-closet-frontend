@@ -14,7 +14,7 @@ export default function ActionButtonsAccordion() {
       <Row>
         <Col xs={12} lg={2}>
           <Accordion.Toggle as={Button} variant="dark" eventKey="0" className="d-block d-lg-none mb-3" block>Action Buttons</Accordion.Toggle>
-          <Accordion.Toggle as={Button} variant="dark" eventKey="0" className="d-none d-lg-block" style={{ position: 'absolute', zIndex: 1000 }}>Action Buttons</Accordion.Toggle>
+          <Accordion.Toggle as={Button} variant="dark" eventKey="0" className="d-none d-lg-block">Action Buttons</Accordion.Toggle>
         </Col>
         <Col xs={12} lg={10}>
           <Accordion.Collapse eventKey="0">

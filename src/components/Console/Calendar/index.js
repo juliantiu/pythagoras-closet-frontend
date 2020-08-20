@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import './index.css';
-import '../../../assets/css/style.css';
 import ActionButtonsAccordion from './ActionButtonsAccordion';
 import { CategoryProvider, useCategoryState } from '../../../context_hooks/CategoryState';
 import { useAuthState } from '../../../context_hooks/AuthState';
 import { SubcategoryProvider, useSubcategoryState } from '../../../context_hooks/SubcategoryState';
 import { ClothingProvider, useClothingState } from '../../../context_hooks/ClothingState';
-
-const timesUsed = 7;
+import Closet from './Closet';
+import './index.css';
+import '../../../assets/css/style.css';
 
 function Body() {
   const { currentUser } = useAuthState();
@@ -37,7 +36,6 @@ function Body() {
     [getClothes, currentUser]
   );
 
-
   if (categories === undefined || subcategories === undefined || clothes === undefined) {
     return (
       <Row>
@@ -50,18 +48,14 @@ function Body() {
 
   return (
     <Container fluid>
-      <Row className="mt-4">
+      <Row className="my-4">
         <Col xs={12}>
           <ActionButtonsAccordion />
         </Col>
       </Row>
       <Row>
-        <Col xs={3} lg={2} className="pr-0">
-        </Col>
-        <Col xs={9} lg={10} className="pl-0 chart">
-          <div className="column-labels-container">
-            {[...Array(7).keys()].map(times => <div key={times} className="font-1 font-size-7">{times + 1}</div>)}
-          </div>
+        <Col xs={12}>
+          <Closet />
         </Col>
       </Row>
     </Container>

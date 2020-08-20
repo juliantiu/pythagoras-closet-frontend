@@ -1,0 +1,40 @@
+.closet-card {
+  width: 250px;
+}
+
+.closet-card-title {
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.closet-card-image {
+  height: 250px;
+  width: 250px;
+  background-color: #D3D3D3;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.closet-modal-thumbnail {
+  min-height: 60px;
+  min-width: 60px;
+  max-height: 60px;
+  max-width: 60px;
+  border-radius: 100%;
+  background-color: #D3D3D3;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.closet-modal-title {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.closet-modal-title > p {
+  font-weight: bold;
+  font-size: 15px;
+  margin: 0px 0px 0px 15px !important;
+}
