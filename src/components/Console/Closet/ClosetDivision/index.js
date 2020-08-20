@@ -3,7 +3,7 @@ import { useCategoryState } from '../../../../context_hooks/CategoryState';
 import { useSubcategoryState } from '../../../../context_hooks/SubcategoryState';
 import { useClothingState } from '../../../../context_hooks/ClothingState';
 import { Row, Col, Card, Button } from 'react-bootstrap';
-import { IntermediateModal } from './ClosetModals';
+import { IntermediateModal } from './ClosetCardsModal';
 import './index.css';
 
 function generateCategoriesToSubcategoriesLookup(subcategories, stcLookup) {
@@ -79,7 +79,7 @@ function generateSubcategoriesJSX(subcategoriesList, onShowIntermediateModal) {
   );
 }
 
-export default function Closet() {
+export default function ClosetDivision() {
   const { categories } = useCategoryState();
   const { subcategories } = useSubcategoryState();
   const { clothes } = useClothingState();
@@ -116,7 +116,7 @@ export default function Closet() {
     [categories, subcategories, clothes]
   );
 
-  const closet = useMemo(
+  const closetDivisions = useMemo(
     () => {
       return closetData.map(
         category => {
@@ -144,7 +144,7 @@ export default function Closet() {
           onHideModal={onHideModal}
           selectedClothing={selectedClothing}
         />
-        {closet}
+        {closetDivisions}
       </Col>
     </Row>
   );

@@ -5,7 +5,7 @@ import { CategoryProvider, useCategoryState } from '../../../context_hooks/Categ
 import { useAuthState } from '../../../context_hooks/AuthState';
 import { SubcategoryProvider, useSubcategoryState } from '../../../context_hooks/SubcategoryState';
 import { ClothingProvider, useClothingState } from '../../../context_hooks/ClothingState';
-import Closet from './Closet';
+import ClosetDivision from './ClosetDivision';
 import './index.css';
 import '../../../assets/css/style.css';
 
@@ -55,14 +55,14 @@ function Body() {
       </Row>
       <Row>
         <Col xs={12}>
-          <Closet />
+          <ClosetDivision />
         </Col>
       </Row>
     </Container>
   );
 }
 
-export default function Calendar() {
+export default function Closet() {
   return (
     <CategoryProvider>
     <SubcategoryProvider>

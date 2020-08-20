@@ -1,12 +1,12 @@
 import React from 'react';
 import Navbar from '../Navbar';
-import Calendar from './Calendar';
+import Closet from './Closet';
 
 export default function Console() {
   return (
     <>
       <Navbar />
-      <Calendar />
+      <Closet />
     </>
   );
 }
