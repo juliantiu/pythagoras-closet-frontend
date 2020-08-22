@@ -1,11 +1,9 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
-import { useAuthState } from '../../../../../context_hooks/AuthState';
 
 function AddCategoryModalForm(props) {
   const { categories, addCategory } = useCategoryState();
-  const { currentUser } = useAuthState();
   const { showModal, onHideModal } = props;
   const [name, setName] = useState('');
   const [existingCategory, setExistingCategory] = useState(false);
@@ -24,11 +22,11 @@ function AddCategoryModalForm(props) {
 
   const onSave = useCallback(
     async () => {
-      await addCategory(currentUser.uid, name);
+      await addCategory(name);
       setName('');
       onHideModal();
     },
-    [onHideModal, addCategory, currentUser, name, setName]
+    [onHideModal, addCategory, name, setName]
   );
 
   const onCancel = useCallback(

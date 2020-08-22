@@ -1,14 +1,56 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { useCategoryState } from '../../../../../context_hooks/CategoryState';
 
 function DeleteCategoryModalForm(props) {
-  const { showModal, onHideModal } = props;
+  const { showModal, onHideModal, categories, deleteCategory } = props;
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSelectedCategoryChange = useCallback(
+    event => {
+      const { value } = event.target;
+      setSelectedCategory(value);
+    },
+    [setSelectedCategory]
+  );
+
+  const categoriesOptions = useMemo(
+    () => {
+      return categories.map(
+        category => {
+          return (
+            <option key={category.id} value={category.id}>{category.name}</option>
+          );
+        }
+      )
+    },
+    [categories]
+  );
+
+  const onHideModalCallback = useCallback(
+    () => {
+      setSelectedCategory('');
+      setIsLoading(false);
+      onHideModal();
+    },
+    [onHideModal, setSelectedCategory, setIsLoading]
+  );
+
+  const afterSaveCallback = useCallback(
+    () => {
+      setIsLoading(false);
+      onHideModalCallback();
+    },
+    [setIsLoading, onHideModalCallback]
+  );
 
   const onSave = useCallback(
     () => {
-      onHideModal();
+      setIsLoading(true);
+      deleteCategory(selectedCategory, afterSaveCallback);
     },
-    [onHideModal]
+    [selectedCategory, deleteCategory, afterSaveCallback]
   );
 
   return (
@@ -27,15 +69,16 @@ function DeleteCategoryModalForm(props) {
         <Form>
         <Form.Group>
             <Form.Label>Current Category Name</Form.Label>
-            <Form.Control as="select">
+            <Form.Control as="select" onChange={onSelectedCategoryChange} value={selectedCategory}>
               <option>Select</option>
+              {categoriesOptions}
             </Form.Control>
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHideModal}>Close</Button>
-        <Button onClick={onSave}>Save</Button>
+        <Button onClick={onHideModal} disabled={isLoading}>Close</Button>
+        <Button onClick={onSave} disabled={isLoading || selectedCategory === ''}>Delete</Button>
       </Modal.Footer>
     </Modal>
   );
@@ -43,6 +86,7 @@ function DeleteCategoryModalForm(props) {
 
 export default function DeleteCategoryModal() {
   const [showModal, setShowModal] = useState(false);
+  const { categories, deleteCategory } = useCategoryState();
 
   const onShowModal = useCallback(
     () => {
@@ -60,8 +104,8 @@ export default function DeleteCategoryModal() {
 
   return (
     <>
-      <DeleteCategoryModalForm showModal={showModal} onHideModal={onHideModal}/>
-      <Button className="w-100" variant="danger" onClick={onShowModal}>Delete Category</Button>
+      <DeleteCategoryModalForm showModal={showModal} onHideModal={onHideModal} categories={categories} deleteCategory={deleteCategory}/>
+      <Button className="w-100" variant="danger" onClick={onShowModal} disabled={categories.length === 0}>Delete Category</Button>
     </>
   );
 }

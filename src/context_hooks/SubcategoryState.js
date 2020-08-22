@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
+import { useAuthState } from './AuthState';
 
 // URI's
 const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ?
@@ -20,12 +21,13 @@ export const SubcategoryContext = createContext([]);
 
 export const SubcategoryProvider = ({ children }) => {
   const [subcategories, setSubcategories] = useState(undefined);
+  const { currentUser } = useAuthState();
 
   // get subcategories
   const getSubcategories = useCallback(
-    async (uid) => {
-      await fetch(
-        `${hostname}/${getSubcategoriesURI}/${uid}`, {
+    () => {
+      fetch(
+        `${hostname}/${getSubcategoriesURI}/${currentUser.uid}`, {
           method: 'GET', 
           mode: 'cors',
           cache: 'no-cache',
@@ -36,12 +38,12 @@ export const SubcategoryProvider = ({ children }) => {
       .then(data => setSubcategories(data))
       .catch(() => { alert('Failed to get subcategories'); })
     },
-    [setSubcategories]
+    [setSubcategories, currentUser]
   );
 
   // add subcategory
   const addSubcategory = useCallback(
-    async (uid, categoryId, name) => {
+    async (categoryId, name) => {
       await fetch(newSubcategoryURL, {
         method: 'POST',
         mode: 'cors',
@@ -51,15 +53,15 @@ export const SubcategoryProvider = ({ children }) => {
           'Content-type': 'application/json',
         },
         body: JSON.stringify({
-          uid,
           categoryId,
           name,
+          uid: currentUser.uid
         })
       })
       .then(() => getSubcategories())
       .catch(() => { alert('Failed to add subcategory'); });
     },
-    [getSubcategories]
+    [getSubcategories, currentUser]
   );
 
   // update subcategory

@@ -1,11 +1,9 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
-import { useAuthState } from '../../../../../context_hooks/AuthState';
 
 function UpdateCategoryModalForm(props) {
   const { showModal, onHideModal, categories, updateCategory } = props;
-  const { currentUser } = useAuthState();
   const [newCategoryName, setNewCategoryName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -52,9 +50,9 @@ function UpdateCategoryModalForm(props) {
   const onSave = useCallback(
     () => {
       setIsLoading(true);
-      updateCategory(selectedCategory, currentUser.uid, newCategoryName, afterSaveCallback);
+      updateCategory(selectedCategory, newCategoryName, afterSaveCallback);
     },
-    [selectedCategory, currentUser, newCategoryName, setIsLoading, updateCategory, afterSaveCallback]
+    [selectedCategory, newCategoryName, setIsLoading, updateCategory, afterSaveCallback]
   );
 
   const onSelectedCategoryChange = useCallback(

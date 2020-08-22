@@ -38,6 +38,14 @@ function AddClothingModalForm(props) {
     [setSelectedSubcategory, subcategories]
   );
 
+  useEffect(
+    () => {
+      if (subcategories === undefined || subcategories.length === 0) return;
+      setSelectedSubcategory((subcategories.find(subcategory => subcategory.categoryId === selectedCategory) ?? subcategories[0]).id);
+    },
+    [setSelectedSubcategory, subcategories, selectedCategory]
+  );
+
   const onSave = useCallback(
     () => {
       addClothing(currentUser.uid, selectedSubcategory, label, thumbnailString, usagePerLaundry, dateBought, notes);

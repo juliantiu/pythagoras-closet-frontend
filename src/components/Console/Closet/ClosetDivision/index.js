@@ -62,6 +62,7 @@ function generateClothesJSX(clothesList, onShowIntermediateModal) {
 }
 
 function generateSubcategoriesJSX(subcategoriesList, onShowIntermediateModal) {
+  if (subcategoriesList === undefined) return <></>;
   return subcategoriesList.map(
     subcategory => {
       return (

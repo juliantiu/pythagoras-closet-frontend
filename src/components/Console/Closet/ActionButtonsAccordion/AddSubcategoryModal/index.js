@@ -1,12 +1,10 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { useAuthState } from '../../../../../context_hooks/AuthState';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
 import { useSubcategoryState } from '../../../../../context_hooks/SubcategoryState';
 
 function AddSubcategoryModalForm(props) {
   const { showModal, onHideModal, categories } = props;
-  const { currentUser } = useAuthState();
   const { subcategories, addSubcategory } = useSubcategoryState();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [subcategoryName, setSubcategoryName] = useState('');
@@ -22,11 +20,11 @@ function AddSubcategoryModalForm(props) {
 
   const onSave = useCallback(
     () => {
-      addSubcategory(currentUser.uid, selectedCategory, subcategoryName);
+      addSubcategory(selectedCategory, subcategoryName);
       setSubcategoryName('');
       onHideModal();
     },
-    [onHideModal, addSubcategory, currentUser, selectedCategory, subcategoryName, setSubcategoryName]
+    [onHideModal, addSubcategory, selectedCategory, subcategoryName, setSubcategoryName]
   );
 
   const onCancel = useCallback(

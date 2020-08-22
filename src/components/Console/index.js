@@ -21,16 +21,16 @@ function Body() {
 
   useEffect(
     () => {
-      getCategories(currentUser.uid);
+      getCategories();
     },
-    [getCategories, currentUser]
+    [getCategories]
   );
 
   useEffect(
     () => {
-      getSubcategories(currentUser.uid);
+      getSubcategories();
     },
-    [getSubcategories, currentUser]
+    [getSubcategories]
   );
 
   useEffect(
