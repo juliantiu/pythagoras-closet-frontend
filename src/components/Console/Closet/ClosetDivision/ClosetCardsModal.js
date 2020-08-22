@@ -2,8 +2,10 @@ import React, { useCallback, useState } from 'react';
 // import { useCategoryState } from '../../../../context_hooks/CategoryState';
 // import { useSubcategoryState } from '../../../../context_hooks/SubcategoryState';
 // import { useClothingState } from '../../../../context_hooks/ClothingState';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Form } from 'react-bootstrap';
 import './index.css';
+import { useLaundryState } from '../../../../context_hooks/LaundryState';
+import { useWasherState } from '../../../../context_hooks/WasherState';
 
 const modalEnum = {
   info: 0,
@@ -28,7 +30,7 @@ function InfoModal(props) {
       </Modal.Header>
       <Modal.Body>What would you like to do?</Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHideFormModals(modalEnum.info)}>Cancel</Button>
+        <Button variant="secondary" onClick={onHideFormModals(modalEnum.info)}>Back</Button>
         <Button variant="primary" onClick={onSave}>Submit</Button>
       </Modal.Footer>
     </Modal>
@@ -36,13 +38,35 @@ function InfoModal(props) {
 }
 
 function UseModal(props) {
-  const { showUseModal, onHideFormModals, onSaveFormModals } = props;
+  const { showUseModal, onHideFormModals, onSaveFormModals, id } = props;
+  const { addLaundry } = useLaundryState();
+  const [dateUsed, setDateUsed] = useState(new Date().toISOString().split('T')[0]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSave = useCallback(
+  const onChangeDate = useCallback(
+    (event) => {
+      const { value } = event.target;
+      const newDate = new Date(value);
+      setDateUsed(newDate.toISOString().split('T')[0]);
+    },
+    [setDateUsed]
+  );
+
+  const afterSaveCallback = useCallback(
     () => {
+      setIsLoading(false);
       onSaveFormModals(modalEnum.use);
     },
-    [onSaveFormModals]
+    [setIsLoading, onSaveFormModals]
+  );
+
+  const onSave = useCallback(
+    async () => {
+      setIsLoading(true);
+      addLaundry(id, dateUsed, afterSaveCallback);
+      onSaveFormModals(modalEnum.use);
+    },
+    [onSaveFormModals, addLaundry, id, dateUsed, setIsLoading, afterSaveCallback]
   );
 
   return (
@@ -50,23 +74,47 @@ function UseModal(props) {
       <Modal.Header>
         <Modal.Title>Use</Modal.Title>
       </Modal.Header>
-      <Modal.Body>What would you like to do?</Modal.Body>
+      <Modal.Body>
+        <Form.Label>Usage Date</Form.Label>
+        <Form.Control type="date" onChange={onChangeDate} value={dateUsed}/>
+      </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHideFormModals(modalEnum.use)}>Cancel</Button>
-        <Button variant="primary" onClick={onSave}>Submit</Button>
+        <Button variant="secondary" onClick={onHideFormModals(modalEnum.use)} disabled={isLoading}>Back</Button>
+        <Button variant="primary" onClick={onSave} disabled={isLoading || dateUsed === ''}>Submit</Button>
       </Modal.Footer>
     </Modal>
   )
 }
 
 function WashModal(props) {
-  const { showWashModal, onHideFormModals, onSaveFormModals } = props;
+  const { showWashModal, onHideFormModals, onSaveFormModals, id } = props;
+  const { addWasher } = useWasherState();
+  const [washDate, setWashDate] = useState(new Date().toISOString().split('T')[0]);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const afterSaveCallback = useCallback(
+    () => {
+      setIsLoading(false);
+      onSaveFormModals(modalEnum.wash);
+    },
+    [setIsLoading, onSaveFormModals]
+  );
 
   const onSave = useCallback(
     () => {
-      onSaveFormModals(modalEnum.wash);
+      setIsLoading(true);
+      addWasher(id, washDate, afterSaveCallback);
     },
-    [onSaveFormModals]
+    [addWasher, id, washDate, afterSaveCallback, setIsLoading]
+  );
+
+  const onChangeDate = useCallback(
+    (event) => {
+      const { value } = event.target;
+      const newDate = new Date(value);
+      setWashDate(newDate.toISOString().split('T')[0]);
+    },
+    [setWashDate]
   );
 
   return (
@@ -74,10 +122,13 @@ function WashModal(props) {
       <Modal.Header>
         <Modal.Title>Wash</Modal.Title>
       </Modal.Header>
-      <Modal.Body>What would you like to do?</Modal.Body>
+      <Modal.Body>
+        <Form.Label>Wash Date</Form.Label>
+        <Form.Control type="date" onChange={onChangeDate} value={washDate}/>
+      </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHideFormModals(modalEnum.wash)}>Cancel</Button>
-        <Button variant="primary" onClick={onSave}>Submit</Button>
+        <Button variant="secondary" onClick={onHideFormModals(modalEnum.wash)} disabled={isLoading}>Back</Button>
+        <Button variant="primary" onClick={onSave} disabled={isLoading || washDate === ''}>Submit</Button>
       </Modal.Footer>
     </Modal>
   )
@@ -159,8 +210,8 @@ export function IntermediateModal(props) {
   return (
     <>
       <InfoModal showInfoModal={showInfoModal} onHideFormModals={onHideFormModals} onSaveFormModals={onSaveFormModals}/>
-      <UseModal showUseModal={showUseModal} onHideFormModals={onHideFormModals} onSaveFormModals={onSaveFormModals}/>
-      <WashModal showWashModal={showWashModal} onHideFormModals={onHideFormModals} onSaveFormModals={onSaveFormModals}/>
+      <UseModal id={id} showUseModal={showUseModal} onHideFormModals={onHideFormModals} onSaveFormModals={onSaveFormModals}/>
+      <WashModal id={id} showWashModal={showWashModal} onHideFormModals={onHideFormModals} onSaveFormModals={onSaveFormModals}/>
       <Modal show={showIntermediateModal} onHide={onHideModal}>
         <Modal.Header>
         <div className="closet-modal-title">{modalThumbnail}{' '}<p>{labelOrId}</p></div>
