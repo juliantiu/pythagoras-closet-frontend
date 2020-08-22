@@ -7,12 +7,12 @@ const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
 const getCategoriesURI = process.env.REACT_APP_API_GET_CATEGORIES;
 const newCategoryURI = process.env.REACT_APP_API_NEW_CATEGORY;
-// const updateCategoryURI = process.env.REACT_APP_API_UPDATECATEGORY;
+const updateCategoryURI = process.env.REACT_APP_API_UPDATE_CATEGORY;
 // const deleteCategoryURI = process.env.REACT_APP_API_DELETECATEGORY;
 
 // static URL's
 const newCategoryURL = `${hostname}/${newCategoryURI}`;
-// const updateCategoryURL = `${hostname}/${updateCategoryURI}`;
+const updateCategoryURL = `${hostname}/${updateCategoryURI}`;
 // const deleteCategoryURL = `${hostname}/${deleteCategoryURI}`;
 
 
@@ -63,12 +63,26 @@ export const CategoryProvider = ({ children }) => {
 
   // update categories
   const updateCategory = useCallback(
-    async (id, uid, name, category) => {
-      await fetch(
-        '', {
-
-        }
-      ).then(() => getCategories(uid));
+    async (id, uid, name, callback) => {
+      fetch(`${updateCategoryURL}/${id}`, {
+        method: 'PUT',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials:'same-origin',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          uid,
+          name
+        })
+      }).then(() => {
+        callback();
+        getCategories(uid);
+      }).catch(() => {
+        callback();
+        alert('Failed to update category');
+      })
     },
     [getCategories]
   );
