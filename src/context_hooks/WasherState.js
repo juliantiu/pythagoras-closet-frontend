@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
 import { useClothingState } from './ClothingState';
+import { useAuthState } from './AuthState';
 
 // URI's
 const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ?
@@ -22,6 +23,7 @@ export const WasherContext = createContext({});
 
 export const WasherProvider = ({ children }) => {
   const { clothes } = useClothingState();
+  const { currentUser } = useAuthState();
   const [washer, setWasher] = useState(undefined);
 
   // get washer
@@ -44,7 +46,7 @@ export const WasherProvider = ({ children }) => {
 
   const getWasherFromClothingIds = useCallback(
     () => {
-      if (clothes === undefined) return;
+      if (clothes === undefined || clothes.length === 0) return;
       const clothingIds = clothes?.map(clothing => clothing.id) ?? [];
       return fetch(
         `${hostname}/${getWasherFromClothingIdsURI}`, {
@@ -64,7 +66,7 @@ export const WasherProvider = ({ children }) => {
       .then(data => setWasher(data))
       .catch(() => { alert('Failed to get washer'); })
     },
-    [setWasher, clothes]
+    [setWasher, getWasherFromUids, currentUser, clothes]
   );
 
   // add washer

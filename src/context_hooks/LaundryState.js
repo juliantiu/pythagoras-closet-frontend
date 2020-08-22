@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
 import { useClothingState } from './ClothingState';
+import { useAuthState } from './AuthState';
 
 // URI's
 const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ?
@@ -22,6 +23,7 @@ export const LaundryContext = createContext({});
 
 export const LaundryProvider = ({ children }) => {
   const { clothes } = useClothingState();
+  const { currentUser } = useAuthState();
   const [laundry, setLaundry] = useState(undefined);
 
   // get laundry
@@ -43,10 +45,10 @@ export const LaundryProvider = ({ children }) => {
   );
 
   const getLaundryFromClothingIds = useCallback(
-    uid => {
-      if (clothes === undefined) return;
+    () => {
+      if (clothes === undefined || clothes.length === 0) return;
       const clothingIds = clothes?.map(clothing => clothing.id) ?? [];
-      return fetch(
+      fetch(
         `${hostname}/${getLaundryFromClothingIdsURI}`, {
           method: 'POST', 
           mode: 'cors',
@@ -64,7 +66,7 @@ export const LaundryProvider = ({ children }) => {
       .then(data => setLaundry(data))
       .catch(() => { alert('Failed to get laundry'); })
     },
-    [setLaundry, clothes]
+    [setLaundry, getLaundryFromUids, clothes, currentUser]
   );
 
   // add laundry

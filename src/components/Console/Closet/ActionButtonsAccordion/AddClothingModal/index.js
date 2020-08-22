@@ -50,6 +50,7 @@ function AddClothingModalForm(props) {
     () => {
       addClothing(currentUser.uid, selectedSubcategory, label, thumbnailString, usagePerLaundry, dateBought, notes);
       setThumbnailString('');
+      setLabel('');
       setUsagePerLaundry(1);
       setDateBought(() => {
         let todayDate = new Date();
@@ -68,13 +69,15 @@ function AddClothingModalForm(props) {
       addClothing,
       setUsagePerLaundry,
       setDateBought,
-      setThumbnailString
+      setThumbnailString,
+      setLabel
     ]
   );
 
   const onCancel = useCallback(
     () => {
       setThumbnailString('');
+      setLabel('');
       setUsagePerLaundry(1);
       setDateBought(() => {
         let todayDate = new Date();
@@ -85,6 +88,7 @@ function AddClothingModalForm(props) {
       setThumbnailString,
       setUsagePerLaundry,
       setDateBought,
+      setLabel,
       onHideModal
     ]
   )
