@@ -28,9 +28,9 @@ export const LaundryProvider = ({ children }) => {
 
   // get laundry
   const getLaundryFromUids = useCallback(
-    async (uid) => {
-      await fetch(
-        `${hostname}/${getLaundryFromUidURI}/${uid}`, {
+    () => {
+      fetch(
+        `${hostname}/${getLaundryFromUidURI}/${currentUser.uid}`, {
           method: 'GET', 
           mode: 'cors',
           cache: 'no-cache',
@@ -41,7 +41,7 @@ export const LaundryProvider = ({ children }) => {
       .then(data => setLaundry(data))
       .catch(() => { alert('Failed to get laundry'); })
     },
-    [setLaundry]
+    [setLaundry, currentUser]
   );
 
   const getLaundryFromClothingIds = useCallback(
@@ -66,7 +66,7 @@ export const LaundryProvider = ({ children }) => {
       .then(data => setLaundry(data))
       .catch(() => { alert('Failed to get laundry'); })
     },
-    [setLaundry, getLaundryFromUids, clothes, currentUser]
+    [setLaundry, clothes]
   );
 
   // add laundry

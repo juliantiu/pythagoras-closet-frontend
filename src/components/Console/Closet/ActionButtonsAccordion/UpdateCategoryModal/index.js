@@ -28,7 +28,7 @@ function UpdateCategoryModalForm(props) {
     [selectedCategory, categoryNameLookup, setNewCategoryName]
   );
 
-  const onHideModalCallback = useCallback(
+  const onSaveCallbackOrCancel = useCallback(
     () => {
       setNewCategoryName('');
       setSelectedCategory('');
@@ -39,20 +39,12 @@ function UpdateCategoryModalForm(props) {
     [onHideModal, setNewCategoryName, setSelectedCategory, setDuplicateName, setIsLoading]
   );
 
-  const afterSaveCallback = useCallback(
-    () => {
-      setIsLoading(false);
-      onHideModalCallback();
-    },
-    [setIsLoading, onHideModalCallback]
-  );
-
   const onSave = useCallback(
     () => {
       setIsLoading(true);
-      updateCategory(selectedCategory, newCategoryName, afterSaveCallback);
+      updateCategory(selectedCategory, newCategoryName, onSaveCallbackOrCancel);
     },
-    [selectedCategory, newCategoryName, setIsLoading, updateCategory, afterSaveCallback]
+    [selectedCategory, newCategoryName, setIsLoading, updateCategory, onSaveCallbackOrCancel]
   );
 
   const onSelectedCategoryChange = useCallback(
@@ -68,11 +60,10 @@ function UpdateCategoryModalForm(props) {
       const { value } = event.target;
       if (categories.some(category => category.name === value)) {
         setDuplicateName(true);
-        setNewCategoryName(value);
       } else {
         setDuplicateName(false);
-        setNewCategoryName(value);
       }
+      setNewCategoryName(value);
     },
     [categories, setNewCategoryName, setDuplicateName]
   );
@@ -121,7 +112,7 @@ function UpdateCategoryModalForm(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHideModalCallback} disabled={isLoading}>Close</Button>
+        <Button onClick={onSaveCallbackOrCancel} disabled={isLoading}>Close</Button>
         <Button onClick={onSave} disabled={newCategoryName === '' || isLoading || duplicateName}>Save</Button>
       </Modal.Footer>
     </Modal>

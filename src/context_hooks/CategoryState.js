@@ -65,7 +65,7 @@ export const CategoryProvider = ({ children }) => {
 
   // update categories
   const updateCategory = useCallback(
-    async (id, name, callback) => {
+    (id, name, callback) => {
       fetch(`${updateCategoryURL}/${id}`, {
         method: 'PUT',
         mode: 'cors',

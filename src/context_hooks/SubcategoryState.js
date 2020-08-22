@@ -8,12 +8,12 @@ const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
 const getSubcategoriesURI = process.env.REACT_APP_API_GET_SUBCATEGORIES;
 const newSubcategoryURI = process.env.REACT_APP_API_NEW_SUBCATEGORY;
-// const updateCategoryURI = process.env.REACT_APP_API_UPDATECATEGORY;
+const updateSubcategoryURI = process.env.REACT_APP_API_UPDATE_SUBCATEGORY;
 // const deleteCategoryURI = process.env.REACT_APP_API_DELETECATEGORY;
 
 // static URL's
 const newSubcategoryURL = `${hostname}/${newSubcategoryURI}`;
-// const updateCategoryURL = `${hostname}/${updateCategoryURI}`;
+const updateSubcategoryURL = `${hostname}/${updateSubcategoryURI}`;
 // const deleteCategoryURL = `${hostname}/${deleteCategoryURI}`;
 
 
@@ -66,14 +66,30 @@ export const SubcategoryProvider = ({ children }) => {
 
   // update subcategory
   const updateSubcategory = useCallback(
-    async (id, uid, name, subcategory) => {
-      await fetch(
-        '', {
-
-        }
-      ).then(() => getSubcategories(uid));
+    (id, categoryId, name, callback) => {
+      fetch(`${updateSubcategoryURL}/${id}`, {
+        method: 'PUT',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials:'same-origin',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          id,
+          categoryId,
+          name,
+          uid: currentUser.uid
+        })
+      }).then(() => {
+        callback();
+        getSubcategories();
+      }).catch(() => {
+        callback();
+        alert('Failed to update category');
+      })
     },
-    [getSubcategories]
+    [getSubcategories, currentUser]
   );
 
   // delete subcategory
