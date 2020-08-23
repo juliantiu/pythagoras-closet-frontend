@@ -4,7 +4,7 @@ import { useAuthState } from './AuthState';
 // URI's
 const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ?
   process.env.REACT_APP_API_LOCALHOST_URL :
-  process.env.REACT_APP_API_LOCALHOST_URL;
+  process.env.REACT_APP_API_HOSTED_URL;
 
 const getCategoriesURI = process.env.REACT_APP_API_GET_CATEGORIES;
 const newCategoryURI = process.env.REACT_APP_API_NEW_CATEGORY;

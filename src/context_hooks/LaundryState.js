@@ -5,7 +5,7 @@ import { useAuthState } from './AuthState';
 // URI's
 const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ?
   process.env.REACT_APP_API_LOCALHOST_URL :
-  process.env.REACT_APP_API_LOCALHOST_URL;
+  process.env.REACT_APP_API_HOSTED_URL;
 
 const getLaundryFromUidURI = process.env.REACT_APP_API_GET_LAUNDRY_FROM_UIDS;
 const getLaundryFromClothingIdsURI = process.env.REACT_APP_API_GET_LAUNDRY_FROM_CLOTHING_IDS;

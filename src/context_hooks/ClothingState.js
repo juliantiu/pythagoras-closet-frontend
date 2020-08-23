@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useCallback } from 'react';
 // URI's
 const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ?
   process.env.REACT_APP_API_LOCALHOST_URL :
-  process.env.REACT_APP_API_LOCALHOST_URL;
+  process.env.REACT_APP_API_HOSTED_URL;
 
 const getClothesURI = process.env.REACT_APP_API_GET_CLOTHES;
 const newClothingURI = process.env.REACT_APP_API_NEW_CLOTHING;
