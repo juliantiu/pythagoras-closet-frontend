@@ -91,7 +91,7 @@ export const CategoryProvider = ({ children }) => {
 
   // delete categories
   const deleteCategory = useCallback(
-    async (id, callback) => {
+    (id, callback) => {
       fetch(`${deleteCategoryURL}/${id}`, {
         method: 'delete',
         mode: 'cors',

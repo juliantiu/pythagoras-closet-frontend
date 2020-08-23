@@ -9,12 +9,12 @@ const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 const getSubcategoriesURI = process.env.REACT_APP_API_GET_SUBCATEGORIES;
 const newSubcategoryURI = process.env.REACT_APP_API_NEW_SUBCATEGORY;
 const updateSubcategoryURI = process.env.REACT_APP_API_UPDATE_SUBCATEGORY;
-// const deleteCategoryURI = process.env.REACT_APP_API_DELETECATEGORY;
+const deleteSubcategoryURI = process.env.REACT_APP_API_DELETE_SUBCATEGORY;
 
 // static URL's
 const newSubcategoryURL = `${hostname}/${newSubcategoryURI}`;
 const updateSubcategoryURL = `${hostname}/${updateSubcategoryURI}`;
-// const deleteCategoryURL = `${hostname}/${deleteCategoryURI}`;
+const deleteSubcategoryURL = `${hostname}/${deleteSubcategoryURI}`;
 
 
 export const SubcategoryContext = createContext([]);
@@ -94,12 +94,19 @@ export const SubcategoryProvider = ({ children }) => {
 
   // delete subcategory
   const deleteSubcategory = useCallback(
-    async (id, uid) => {
-      await fetch(
-        '', {
-
-        }
-      ).then(() => getSubcategories(uid));
+    async (id, callback) => {
+      fetch(`${deleteSubcategoryURL}/${id}`, {
+        method: 'delete',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials:'same-origin'
+      }).then(() => {
+        callback();
+        getSubcategories();
+      }).catch(() => {
+        callback();
+        alert('Failed to delete subcategory');
+      });
     },
     [getSubcategories]
   );

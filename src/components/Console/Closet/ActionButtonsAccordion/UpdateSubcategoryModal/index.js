@@ -113,9 +113,9 @@ function UpdateSubcategoryModalForm(props) {
     () => {
       if (subcategories === undefined) return <></>;
       return subcategories.filter( subcategory => subcategory.categoryId === selectedCategory).map(
-        category => {
+        subcat => {
           return (
-            <option key={`update-subcategories-${category.id}`} value={category.id}>{category.name}</option>
+            <option key={`update-subcategories-${subcat.id}`} value={subcat.id}>{subcat.name}</option>
           );
         }
       );
