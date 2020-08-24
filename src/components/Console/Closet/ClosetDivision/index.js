@@ -68,7 +68,7 @@ function generateSubcategoriesJSX(subcategoriesList, onShowIntermediateModal) {
       return (
         <Fragment key={`closet-subcategory-${subcategory.id}`}>
           <Row className="mb-2">
-            <Col xs={12}><h4>{subcategory.name}</h4></Col>
+            <Col xs={12}><h5>{subcategory.name}</h5></Col>
           </Row>
           <div className="d-flex justify-content-center justify-content-sm-around justify-content-lg-start flex-wrap">
             {generateClothesJSX(subcategory.clothes, onShowIntermediateModal)}

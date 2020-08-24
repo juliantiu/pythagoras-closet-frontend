@@ -2,6 +2,8 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
 import { useSubcategoryState } from '../../../../../context_hooks/SubcategoryState';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 function AddSubcategoryModalForm(props) {
   const { showModal, onHideModal, categories } = props;
@@ -131,7 +133,7 @@ export default function AddSubcategoryModal() {
   return (
     <>
       <AddSubcategoryModalForm showModal={showModal} onHideModal={onHideModal} categories={categories}/>
-      <Button className="w-100" variant="dark" onClick={onShowModal} disabled={categories.length === 0}>Add Subcategory</Button>
+      <Button className="action-button" variant="dark" onClick={onShowModal} disabled={categories.length === 0}><FontAwesomeIcon icon={faPlus}/></Button>
     </>
   );
 }

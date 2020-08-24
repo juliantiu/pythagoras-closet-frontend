@@ -8,7 +8,7 @@ import '../../../assets/css/style.css';
 function Body() {
   return (
     <Container fluid>
-      <Row className="my-4">
+      <Row className="mb-3 sticky-accordion d-block">
         <Col xs={12}>
           <ActionButtonsAccordion />
         </Col>

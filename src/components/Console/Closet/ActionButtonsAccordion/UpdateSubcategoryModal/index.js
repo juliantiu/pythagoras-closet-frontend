@@ -2,6 +2,8 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useSubcategoryState } from '../../../../../context_hooks/SubcategoryState';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPen } from '@fortawesome/free-solid-svg-icons'
 
 function UpdateSubcategoryModalForm(props) {
   const { showModal, onHideModal, subcategories, updateSubcategory } = props;
@@ -189,7 +191,7 @@ export default function UpdateSubcategoryModal() {
   return (
     <>
       <UpdateSubcategoryModalForm showModal={showModal} onHideModal={onHideModal} subcategories={subcategories} updateSubcategory={updateSubcategory}/>
-      <Button className="w-100" variant="warning" onClick={onShowModal} disabled={subcategories.length === 0}>Edit Subcategory</Button>
+      <Button className="action-button" variant="warning" onClick={onShowModal} disabled={subcategories.length === 0}><FontAwesomeIcon icon={faPen}/></Button>
     </>
   );
 }

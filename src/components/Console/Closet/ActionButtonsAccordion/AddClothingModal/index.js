@@ -5,6 +5,8 @@ import { useClothingState } from '../../../../../context_hooks/ClothingState';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
 import { useSubcategoryState } from '../../../../../context_hooks/SubcategoryState';
 import { formatDateToYYYYMMDD, getBase64 } from '../../../../../utils/general_util_functions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 function AddClothingModalForm(props) {
   const { showModal, onHideModal, subcategories} = props;
@@ -254,7 +256,7 @@ export default function AddClothingModal() {
   return (
     <>
       <AddClothingModalForm showModal={showModal} onHideModal={onHideModal} subcategories={subcategories}/>
-      <Button className="w-100" variant="dark" onClick={onShowModal}>Add Clothing</Button>
+      <Button className="action-button" variant="dark" onClick={onShowModal}><FontAwesomeIcon icon={faPlus}/></Button>
     </>
   );
 }

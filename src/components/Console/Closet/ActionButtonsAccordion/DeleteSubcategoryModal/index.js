@@ -2,6 +2,8 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useSubcategoryState } from '../../../../../context_hooks/SubcategoryState';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 function DeleteSubcategoryModalForm(props) {
   const { showModal, onHideModal, subcategories, deleteSubcategory } = props;
@@ -105,7 +107,7 @@ function DeleteSubcategoryModalForm(props) {
             </Form.Control>
           </Form.Group>
           <Form.Group>
-            <Form.Label>Current Subcategory Name</Form.Label>
+            <Form.Label>Subcategory</Form.Label>
             <Form.Control as="select" onChange={onSubcategoryChange} value={selectedSubcategory}>
               <option value="">Select</option>
               {subcategoryOptions}
@@ -142,7 +144,7 @@ export default function DeleteSubcategoryModal() {
   return (
     <>
       <DeleteSubcategoryModalForm showModal={showModal} onHideModal={onHideModal} subcategories={subcategories} deleteSubcategory={deleteSubcategory}/>
-      <Button className="w-100" variant="danger" onClick={onShowModal} disabled={subcategories.length === 0}>Delete Subcategory</Button>
+      <Button className="action-button" variant="danger" onClick={onShowModal} disabled={subcategories.length === 0}><FontAwesomeIcon icon={faTrash}/></Button>
     </>
   );
 }

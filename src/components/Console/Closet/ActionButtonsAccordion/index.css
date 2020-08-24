@@ -1,0 +1,15 @@
+.action-button-toggle-lg {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+
+.action-button {
+  height: 38px;
+  width: 38px;
+  border-radius: 100% !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 10px;
+}

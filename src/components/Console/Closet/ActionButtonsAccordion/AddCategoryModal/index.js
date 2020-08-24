@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 function AddCategoryModalForm(props) {
   const { categories, addCategory } = useCategoryState();
@@ -98,7 +100,7 @@ export default function AddCategoryModal(props) {
   return (
     <>
       <AddCategoryModalForm showModal={showModal} onHideModal={onHideModal}/>
-      <Button className="w-100" variant="dark" onClick={onShowModal}>Add Category</Button>
+      <Button className="action-button" variant="dark" onClick={onShowModal}><FontAwesomeIcon icon={faPlus}/></Button>
     </>
   );
 }

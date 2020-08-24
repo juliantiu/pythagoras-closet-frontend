@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 function DeleteCategoryModalForm(props) {
   const { showModal, onHideModal, categories, deleteCategory } = props;
@@ -68,7 +70,7 @@ function DeleteCategoryModalForm(props) {
       <Modal.Body>
         <Form>
         <Form.Group>
-            <Form.Label>Current Category Name</Form.Label>
+            <Form.Label>Category</Form.Label>
             <Form.Control as="select" onChange={onSelectedCategoryChange} value={selectedCategory}>
               <option>Select</option>
               {categoriesOptions}
@@ -105,7 +107,7 @@ export default function DeleteCategoryModal() {
   return (
     <>
       <DeleteCategoryModalForm showModal={showModal} onHideModal={onHideModal} categories={categories} deleteCategory={deleteCategory}/>
-      <Button className="w-100" variant="danger" onClick={onShowModal} disabled={categories.length === 0}>Delete Category</Button>
+      <Button className="action-button" variant="danger" onClick={onShowModal} disabled={categories.length === 0}><FontAwesomeIcon icon={faTrash}/></Button>
     </>
   );
 }
