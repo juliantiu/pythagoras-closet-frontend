@@ -115,8 +115,8 @@ function UpdateCategoryModalForm(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onSaveCallbackOrCancel} disabled={isLoading}>Close</Button>
-        <Button onClick={onSave} disabled={newCategoryName === '' || isLoading || duplicateName}>Save</Button>
+        <Button variant="light" onClick={onSaveCallbackOrCancel} disabled={isLoading}>Close</Button>
+        <Button variant="secondary" onClick={onSave} disabled={newCategoryName === '' || isLoading || duplicateName}>Save</Button>
       </Modal.Footer>
     </Modal>
   );

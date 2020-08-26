@@ -116,7 +116,7 @@ function DeleteSubcategoryModalForm(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onSaveCallbackOrCancel}>Close</Button>
+        <Button variant="light" onClick={onSaveCallbackOrCancel}>Close</Button>
         <Button variant="danger" onClick={onSave} disabled={isLoading || selectedSubcategory === ''}>Delete</Button>
       </Modal.Footer>
     </Modal>

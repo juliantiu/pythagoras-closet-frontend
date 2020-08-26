@@ -38,3 +38,8 @@
   font-size: 15px;
   margin: 0px 0px 0px 15px !important;
 }
+
+.closet-modal-delete {
+  position: absolute;
+  left: 12px;
+}

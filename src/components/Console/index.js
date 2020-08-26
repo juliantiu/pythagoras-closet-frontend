@@ -5,14 +5,17 @@ import Closet from './Closet';
 import { Row, Col } from 'react-bootstrap';
 
 import { CategoryProvider, useCategoryState } from '../../context_hooks/CategoryState';
-import { useAuthState } from '../../context_hooks/AuthState';
 import { SubcategoryProvider, useSubcategoryState } from '../../context_hooks/SubcategoryState';
 import { ClothingProvider, useClothingState } from '../../context_hooks/ClothingState';
 import { LaundryProvider, useLaundryState } from '../../context_hooks/LaundryState';
 import { WasherProvider, useWasherState } from '../../context_hooks/WasherState';
 
+import { Switch } from "react-router-dom";
+import PrivateRoute from '../../hocs/PrivateRoute';
+import DirtyLaundry from './DirtyLaundry';
+import Washer from './Washer';
+
 function Body() {
-  const { currentUser } = useAuthState();
   const { categories, getCategories } = useCategoryState();
   const { subcategories, getSubcategories } = useSubcategoryState();
   const { clothes, getClothes } = useClothingState();
@@ -35,9 +38,9 @@ function Body() {
 
   useEffect(
     () => {
-      getClothes(currentUser.uid);
+      getClothes();
     },
-    [getClothes, currentUser]
+    [getClothes]
   );
 
   useEffect(
@@ -64,7 +67,13 @@ function Body() {
     )
   }
 
-  return <Closet />;
+  return (
+    <Switch>
+      <PrivateRoute path="/closet" component={Closet}/>
+      <PrivateRoute path="/laundrybasket" component={DirtyLaundry}/>
+      <PrivateRoute path="/washer" component={Washer}/>
+    </Switch>
+  );
 }
 
 export default function Console() {

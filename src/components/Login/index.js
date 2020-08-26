@@ -23,9 +23,8 @@ const Login = ({ history }) => {
           .auth()
           .signInWithEmailAndPassword(email, password);
           setErrorMessage({ email: '', password: '' });
-        history.push('/');
+        history.push('/closet');
       } catch {
-        console.log('im in here');
         setErrorMessage({ email: 'The email may be incorrect', password: 'The password may be incorrect' });
         // throw error;
       }
@@ -58,7 +57,7 @@ const Login = ({ history }) => {
   );
 
   if (currentUser) {
-    return <Redirect to="/" />;
+    return <Redirect to="/closet" />;
   }
 
   const passwordField = (

@@ -105,8 +105,8 @@ function AddSubcategoryModalForm(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onCancel}>Cancel</Button>
-        <Button onClick={onSave} disabled={existingSubcategory || selectedCategory === ''}>Save</Button>
+        <Button variant="light" onClick={onCancel}>Cancel</Button>
+        <Button variant="secondary" onClick={onSave} disabled={existingSubcategory || selectedCategory === ''}>Save</Button>
       </Modal.Footer>
     </Modal>
   );

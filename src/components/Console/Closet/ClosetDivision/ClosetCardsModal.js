@@ -1,11 +1,12 @@
-import React, { useCallback, useState } from 'react';
-// import { useCategoryState } from '../../../../context_hooks/CategoryState';
-// import { useSubcategoryState } from '../../../../context_hooks/SubcategoryState';
-// import { useClothingState } from '../../../../context_hooks/ClothingState';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
+import { useCategoryState } from '../../../../context_hooks/CategoryState';
+import { useSubcategoryState } from '../../../../context_hooks/SubcategoryState';
+import { useClothingState } from '../../../../context_hooks/ClothingState';
 import { Button, Modal, Form } from 'react-bootstrap';
-import './index.css';
 import { useLaundryState } from '../../../../context_hooks/LaundryState';
 import { useWasherState } from '../../../../context_hooks/WasherState';
+import { formatDateToYYYYMMDD, getBase64 } from '../../../../utils/general_util_functions';
+import './index.css';
 
 const modalEnum = {
   info: 0,
@@ -14,27 +15,243 @@ const modalEnum = {
 }
 
 function InfoModal(props) {
-  const { showInfoModal, onHideFormModals, onSaveFormModals } = props;
+  const { showInfoModal, onHideFormModals, onSaveFormModals, selectedClothing } = props;
+  const { categories } = useCategoryState();
+  const { subcategories } = useSubcategoryState();
+  const { updateClothing, deleteClothing } = useClothingState();
 
-  const onSave = useCallback(
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [label, setLabel] = useState('');
+  const [notes, setNotes] = useState('');
+  const [thumbnailString, setThumbnailString] = useState('');
+  const [usagePerLaundry, setUsagePerLaundry] = useState(0);
+  const [dateBought, setDateBought] = useState(formatDateToYYYYMMDD(new Date()));
+
+  useEffect(
+    () => {
+      if (selectedClothing === undefined || selectedClothing === null || selectedClothing === '') return;
+      setSelectedCategory(() => {
+        return subcategories.find(subcategory => subcategory.id === selectedClothing.subcategoryId).categoryId;
+      });
+      setSelectedSubcategory(() => selectedClothing.subcategoryId);
+      setLabel(() => selectedClothing.label);
+      setNotes(() => selectedClothing.notes);
+      setThumbnailString(() => selectedClothing.thumbnail);
+      setUsagePerLaundry(() => selectedClothing.usagePerLaundry);
+      setDateBought(() => formatDateToYYYYMMDD(new Date(selectedClothing.dateBought)));
+    },
+    [
+      selectedClothing,
+      subcategories,
+      setSelectedCategory,
+      setSelectedSubcategory,
+      setLabel,
+      setNotes,
+      setThumbnailString,
+      setUsagePerLaundry,
+      setDateBought
+    ]
+  );
+
+  const onCancel = useCallback(
+    () => {
+      setSelectedCategory(() => {
+        return subcategories.find(subcategory => subcategory.id === selectedClothing.subcategoryId).categoryId;
+      });
+      setSelectedSubcategory(() => selectedClothing.subcategoryId);
+      setLabel(() => selectedClothing.label);
+      setNotes(() => selectedClothing.notes);
+      setThumbnailString(() => selectedClothing.thumbnail);
+      setUsagePerLaundry(() => selectedClothing.usagePerLaundry);
+      setDateBought(() => formatDateToYYYYMMDD(new Date(selectedClothing.dateBought)));
+      onHideFormModals(modalEnum.info);
+    },
+    [
+      selectedClothing,
+      subcategories,
+      setSelectedCategory,
+      setSelectedSubcategory,
+      setLabel,
+      setNotes,
+      setUsagePerLaundry,
+      setDateBought,
+      setThumbnailString,
+      onHideFormModals
+    ]
+  );
+
+  const onSaveOrDeleteCallback = useCallback(
     () => {
       onSaveFormModals(modalEnum.info);
     },
     [onSaveFormModals]
   );
 
+  const onSave = useCallback(
+    () => {
+      setIsLoading(true);
+      updateClothing(selectedClothing.id, selectedSubcategory, label, thumbnailString, usagePerLaundry, dateBought, notes, onSaveOrDeleteCallback);
+    }, [
+      selectedClothing,
+      selectedSubcategory,
+      label,
+      thumbnailString,
+      usagePerLaundry,
+      dateBought,
+      notes,
+      updateClothing,
+      onSaveOrDeleteCallback
+    ]
+  );
+
+  const onDelete = useCallback(
+    () => {
+      deleteClothing(selectedClothing.id, onSaveOrDeleteCallback);
+    },
+    [deleteClothing, selectedClothing, onSaveOrDeleteCallback]
+  );
+
+  const categoryOptions = useMemo(
+    () => {
+      return categories.map(category => <option key={`add-clothing-category-options-${category.id}`} value={category.id}>{category.name}</option>);
+    },
+    [categories]
+  );
+
+  const onCategoryChange = useCallback(
+    event => {
+      const { value } = event.target;
+      setSelectedCategory(value);
+    },
+    [setSelectedCategory]
+  );
+
+  const subcategoryOptions = useMemo(
+    () => {
+      return subcategories
+        .filter(subcategory => subcategory.categoryId === selectedCategory)
+        .map(subcat => <option key={`add-clothing-subcategory-options-${subcat.id}`} value={subcat.id}>{subcat.name}</option>);
+    },
+    [selectedCategory, subcategories]
+  );
+
+  const onSubcategoryChange = useCallback(
+    event => {
+      const { value } = event.target;
+      setSelectedSubcategory(value);
+    },
+    [setSelectedSubcategory]
+  );
+
+  const onLabelChange = useCallback(
+    event => {
+      const { value } = event.target;
+      setLabel(value);
+    },
+    [setLabel]
+  );
+
+  const onNotesChange = useCallback(
+    event => {
+      const { value } = event.target;
+      setNotes(value);
+    },
+    [setNotes]
+  );
+
+  const onThumbnailChange = useCallback(
+    event => {
+      const { files } = event.target;
+      const imageFile = files[0];
+      if (imageFile && imageFile.type.match('image.*')) {
+        getBase64(imageFile).then(result => setThumbnailString(result));
+      }
+    },
+    [setThumbnailString]
+  );
+
+  const onUsagePerLaundryChange = useCallback(
+    event => {
+      const { value } = event.target;
+      setUsagePerLaundry(+value);
+    },
+    [setUsagePerLaundry]
+  );
+
+  const onDateBoughtChange = useCallback(
+    event => {
+      const { value } = event.target;
+      setDateBought(() => formatDateToYYYYMMDD(new Date(value)));
+    },
+    [setDateBought]
+  );
+
+  const labelOrImageRequired = (thumbnailString === '' && label === '' );
+
   return (
-    <Modal show={showInfoModal} onHide={onHideFormModals(modalEnum.info)}>
-      <Modal.Header>
-        <Modal.Title>Info.</Modal.Title>
+    <Modal
+      size="md"
+      show={showInfoModal}
+      onHide={onCancel}
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Info.
+        </Modal.Title>
       </Modal.Header>
-      <Modal.Body>What would you like to do?</Modal.Body>
+      <Modal.Body>
+        <Form>
+          <Form.Group>
+            <Form.Label>Category</Form.Label>
+            <Form.Control as="select" onChange={onCategoryChange} value={selectedCategory}>
+              {categoryOptions}
+            </Form.Control>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Subcategory</Form.Label>
+            <Form.Control as="select" onChange={onSubcategoryChange} value={selectedSubcategory}>
+              {subcategoryOptions}
+            </Form.Control>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Label</Form.Label>
+            <Form.Control type="text" onChange={onLabelChange} value={label}/>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Number of Usages Before Washing</Form.Label>
+            <Form.Control type="number" onChange={onUsagePerLaundryChange} value={usagePerLaundry} />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Date Bought</Form.Label>
+            <Form.Control type="date" onChange={onDateBoughtChange} value={dateBought} />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Thumbnail</Form.Label>
+            <Form.Control type="file" onChange={onThumbnailChange} accept="image/*"/>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Notes</Form.Label>
+            <Form.Control as="textarea" onChange={onNotesChange} value={notes} />
+          </Form.Group>
+          {labelOrImageRequired && <small className="text-danger">Either provide a label or an image. They cannot both be left blank.</small>}
+        </Form>
+      </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHideFormModals(modalEnum.info)}>Back</Button>
-        <Button variant="primary" onClick={onSave}>Submit</Button>
+        <Button variant="danger" className="closet-modal-delete" onClick={onDelete}>Delete</Button>
+        <Button variant="light" onClick={onCancel}>Cancel</Button>
+        <Button
+          variant="secondary"
+          onClick={onSave}
+          disabled={selectedCategory === '' || selectedSubcategory === '' || labelOrImageRequired || isLoading}
+        >
+          Save
+        </Button>
       </Modal.Footer>
     </Modal>
-  )
+  );
 }
 
 function UseModal(props) {
@@ -47,7 +264,7 @@ function UseModal(props) {
     (event) => {
       const { value } = event.target;
       const newDate = new Date(value);
-      setDateUsed(newDate.toISOString().split('T')[0]);
+      setDateUsed(formatDateToYYYYMMDD(newDate));
     },
     [setDateUsed]
   );
@@ -61,7 +278,7 @@ function UseModal(props) {
   );
 
   const onSave = useCallback(
-    async () => {
+    () => {
       setIsLoading(true);
       addLaundry(id, dateUsed, afterSaveCallback);
       onSaveFormModals(modalEnum.use);
@@ -69,8 +286,17 @@ function UseModal(props) {
     [onSaveFormModals, addLaundry, id, dateUsed, setIsLoading, afterSaveCallback]
   );
 
+  const onCancel = useCallback(
+    () => {
+      const todayDate = new Date();
+      setDateUsed(formatDateToYYYYMMDD(todayDate));
+      onHideFormModals(modalEnum.use);
+    },
+    [onHideFormModals]
+  );
+
   return (
-    <Modal show={showUseModal} onHide={onHideFormModals(modalEnum.use)}>
+    <Modal show={showUseModal} onHide={onCancel}>
       <Modal.Header>
         <Modal.Title>Use</Modal.Title>
       </Modal.Header>
@@ -79,8 +305,8 @@ function UseModal(props) {
         <Form.Control type="date" onChange={onChangeDate} value={dateUsed}/>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHideFormModals(modalEnum.use)} disabled={isLoading}>Back</Button>
-        <Button variant="primary" onClick={onSave} disabled={isLoading || dateUsed === ''}>Submit</Button>
+        <Button variant="light" onClick={onCancel} disabled={isLoading}>Back</Button>
+        <Button variant="secondary" onClick={onSave} disabled={isLoading || dateUsed === ''}>Submit</Button>
       </Modal.Footer>
     </Modal>
   )
@@ -89,7 +315,7 @@ function UseModal(props) {
 function WashModal(props) {
   const { showWashModal, onHideFormModals, onSaveFormModals, id } = props;
   const { addWasher } = useWasherState();
-  const [washDate, setWashDate] = useState(new Date().toISOString().split('T')[0]);
+  const [washDate, setWashDate] = useState(formatDateToYYYYMMDD(new Date()));
   const [isLoading, setIsLoading] = useState(false);
   
   const afterSaveCallback = useCallback(
@@ -108,17 +334,26 @@ function WashModal(props) {
     [addWasher, id, washDate, afterSaveCallback, setIsLoading]
   );
 
+  const onCancel = useCallback(
+    () => {
+      const todayDate = new Date();
+      setWashDate(formatDateToYYYYMMDD(todayDate));
+      onHideFormModals(modalEnum.wash);
+    },
+    [setWashDate, onHideFormModals]
+  );
+
   const onChangeDate = useCallback(
     (event) => {
       const { value } = event.target;
       const newDate = new Date(value);
-      setWashDate(newDate.toISOString().split('T')[0]);
+      setWashDate(formatDateToYYYYMMDD(newDate));
     },
     [setWashDate]
   );
 
   return (
-    <Modal show={showWashModal} onHide={onHideFormModals(modalEnum.wash)}>
+    <Modal show={showWashModal} onHide={onCancel}>
       <Modal.Header>
         <Modal.Title>Wash</Modal.Title>
       </Modal.Header>
@@ -127,8 +362,8 @@ function WashModal(props) {
         <Form.Control type="date" onChange={onChangeDate} value={washDate}/>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHideFormModals(modalEnum.wash)} disabled={isLoading}>Back</Button>
-        <Button variant="primary" onClick={onSave} disabled={isLoading || washDate === ''}>Submit</Button>
+        <Button variant="light" onClick={onCancel} disabled={isLoading}>Back</Button>
+        <Button variant="secondary" onClick={onSave} disabled={isLoading || washDate === ''}>Submit</Button>
       </Modal.Footer>
     </Modal>
   )
@@ -164,7 +399,7 @@ export function IntermediateModal(props) {
   );
 
   const onHideFormModals = useCallback(
-    (modalType) => () => {
+    (modalType) => {
       switch (modalType) {
         case modalEnum.info:
           onShowIntermediateModalNonEvent(selectedClothing);
@@ -209,7 +444,7 @@ export function IntermediateModal(props) {
 
   return (
     <>
-      <InfoModal showInfoModal={showInfoModal} onHideFormModals={onHideFormModals} onSaveFormModals={onSaveFormModals}/>
+      <InfoModal selectedClothing={selectedClothing} showInfoModal={showInfoModal} onHideFormModals={onHideFormModals} onSaveFormModals={onSaveFormModals}/>
       <UseModal id={id} showUseModal={showUseModal} onHideFormModals={onHideFormModals} onSaveFormModals={onSaveFormModals}/>
       <WashModal id={id} showWashModal={showWashModal} onHideFormModals={onHideFormModals} onSaveFormModals={onSaveFormModals}/>
       <Modal show={showIntermediateModal} onHide={onHideModal}>
@@ -218,10 +453,10 @@ export function IntermediateModal(props) {
         </Modal.Header>
         <Modal.Body>What would you like to do?</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={onHideModal}>Cancel</Button>
-          <Button variant="primary" onClick={onShowFormModals(modalEnum.info)}>Info.</Button>
-          <Button variant="primary" onClick={onShowFormModals(modalEnum.use)}>Use</Button>
-          <Button variant="primary" onClick={onShowFormModals(modalEnum.wash)}>Wash</Button>
+          <Button variant="light" onClick={onHideModal}>Cancel</Button>
+          <Button variant="secondary" onClick={onShowFormModals(modalEnum.info)}>Info.</Button>
+          <Button variant="secondary" onClick={onShowFormModals(modalEnum.use)}>Use</Button>
+          <Button variant="secondary" onClick={onShowFormModals(modalEnum.wash)}>Wash</Button>
         </Modal.Footer>
       </Modal>
     </>

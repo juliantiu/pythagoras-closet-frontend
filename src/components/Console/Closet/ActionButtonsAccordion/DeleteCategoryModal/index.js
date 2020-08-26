@@ -79,8 +79,8 @@ function DeleteCategoryModalForm(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHideModal} disabled={isLoading}>Close</Button>
-        <Button onClick={onSave} disabled={isLoading || selectedCategory === ''}>Delete</Button>
+        <Button variant="light" onClick={onHideModal} disabled={isLoading}>Close</Button>
+        <Button variant="secondary" onClick={onSave} disabled={isLoading || selectedCategory === ''}>Delete</Button>
       </Modal.Footer>
     </Modal>
   );

@@ -73,8 +73,8 @@ function AddCategoryModalForm(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onCancel}>Cancel</Button>
-        <Button onClick={onSave} disabled={existingCategory}>Save</Button>
+        <Button variant="light" onClick={onCancel}>Cancel</Button>
+        <Button variant="secondary" onClick={onSave} disabled={existingCategory}>Save</Button>
       </Modal.Footer>
     </Modal>
   );

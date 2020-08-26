@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { useAuthState } from '../../../../../context_hooks/AuthState';
 import { useClothingState } from '../../../../../context_hooks/ClothingState';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
 import { useSubcategoryState } from '../../../../../context_hooks/SubcategoryState';
@@ -11,7 +10,6 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 function AddClothingModalForm(props) {
   const { showModal, onHideModal, subcategories} = props;
   const { categories } = useCategoryState();
-  const { currentUser } = useAuthState();
   const { addClothing } = useClothingState();
   const [selectedCategory, setSelectedCategory] = useState();
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
@@ -50,7 +48,7 @@ function AddClothingModalForm(props) {
 
   const onSave = useCallback(
     () => {
-      addClothing(currentUser.uid, selectedSubcategory, label, thumbnailString, usagePerLaundry, dateBought, notes);
+      addClothing(selectedSubcategory, label, thumbnailString, usagePerLaundry, dateBought, notes);
       setThumbnailString('');
       setLabel('');
       setUsagePerLaundry(1);
@@ -61,7 +59,6 @@ function AddClothingModalForm(props) {
       onHideModal();
     }, [
       onHideModal,
-      currentUser, 
       selectedSubcategory,
       label,
       thumbnailString,
@@ -165,8 +162,7 @@ function AddClothingModalForm(props) {
   const onDateBoughtChange = useCallback(
     event => {
       const { value } = event.target;
-      console.log('onChange', value);
-      setDateBought(() => new Date(value).toISOString());
+      setDateBought(() => formatDateToYYYYMMDD(new Date(value)));
     },
     [setDateBought]
   );
@@ -223,8 +219,9 @@ function AddClothingModalForm(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onCancel}>Cancel</Button>
+        <Button variant="light" onClick={onCancel}>Cancel</Button>
         <Button
+          variant="secondary"
           onClick={onSave}
           disabled={selectedCategory === '' || selectedSubcategory === '' || labelOrImageRequired}
         >

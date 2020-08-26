@@ -163,8 +163,8 @@ function UpdateSubcategoryModalForm(props) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onSaveCallbackOrCancel} disabled={isLoading}>Close</Button>
-        <Button onClick={onSave} disabled={selectedCategory === '' || selectedSubcategory === '' || newSubcategoryName === '' || duplicateName || isLoading}>Save</Button>
+        <Button variant="light" onClick={onSaveCallbackOrCancel} disabled={isLoading}>Close</Button>
+        <Button variant="secondary" onClick={onSave} disabled={selectedCategory === '' || selectedSubcategory === '' || newSubcategoryName === '' || duplicateName || isLoading}>Save</Button>
       </Modal.Footer>
     </Modal>
   );

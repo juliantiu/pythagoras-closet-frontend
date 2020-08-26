@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
+import { useAuthState } from './AuthState';
 
 // URI's
 const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ?
@@ -7,25 +8,26 @@ const hostname = !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
 
 const getClothesURI = process.env.REACT_APP_API_GET_CLOTHES;
 const newClothingURI = process.env.REACT_APP_API_NEW_CLOTHING;
-// const updateCategoryURI = process.env.REACT_APP_API_UPDATECATEGORY;
-// const deleteCategoryURI = process.env.REACT_APP_API_DELETECATEGORY;
+const updateClothingURI = process.env.REACT_APP_API_UPDATE_CLOTHING;
+const deleteClothingURI = process.env.REACT_APP_API_DELETE_CLOTHING;
 
 // static URL's
 const newClothingURL = `${hostname}/${newClothingURI}`;
-// const updateCategoryURL = `${hostname}/${updateCategoryURI}`;
-// const deleteCategoryURL = `${hostname}/${deleteCategoryURI}`;
+const updateClothingURL = `${hostname}/${updateClothingURI}`;
+const deleteClothingURL = `${hostname}/${deleteClothingURI}`;
 
 
 export const ClothingContext = createContext([]);
 
 export const ClothingProvider = ({ children }) => {
   const [clothes, setClothes] = useState(undefined);
+  const { currentUser } = useAuthState();
 
   // get clothes
   const getClothes = useCallback(
-    async (uid) => {
+    async () => {
       await fetch(
-        `${hostname}/${getClothesURI}/${uid}`, {
+        `${hostname}/${getClothesURI}/${currentUser.uid}`, {
           method: 'GET', 
           mode: 'cors',
           cache: 'no-cache',
@@ -36,12 +38,12 @@ export const ClothingProvider = ({ children }) => {
       .then(data => setClothes(data))
       .catch(() => { alert('Failed to get clothes'); })
     },
-    [setClothes]
+    [setClothes, currentUser]
   );
 
   // add clothing
   const addClothing = useCallback(
-    async (uid, subcategory, label, thumbnail, usagePerLaundry, dateBought, notes) => {
+    async (subcategory, label, thumbnail, usagePerLaundry, dateBought, notes) => {
       await fetch(newClothingURL, {
         method: 'POST',
         mode: 'cors',
@@ -51,7 +53,7 @@ export const ClothingProvider = ({ children }) => {
           'Content-type': 'application/json',
         },
         body: JSON.stringify({
-          uid,
+          uid: currentUser.uid,
           subcategory,
           label,
           thumbnail,
@@ -60,32 +62,59 @@ export const ClothingProvider = ({ children }) => {
           notes
         })
       })
-      .then(() => getClothes(uid))
+      .then(() => getClothes())
       .catch(() => { alert('Failed to add clothing'); });
     },
-    [getClothes]
+    [getClothes, currentUser]
   );
 
   // update clothing
   const updateClothing = useCallback(
-    async (id, uid, name, category) => {
-      await fetch(
-        '', {
-
-        }
-      ).then(() => getClothes(uid));
+    async (id, subcategory, label, thumbnail, usagePerLaundry, dateBought, notes, callback) => {
+      fetch(`${updateClothingURL}/${id}`, {
+        method: 'PUT',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials:'same-origin',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          uid: currentUser.uid,
+          id,
+          subcategory,
+          label,
+          thumbnail,
+          usagePerLaundry,
+          dateBought,
+          notes
+        })
+      }).then(() => {
+        callback();
+        getClothes();
+      }).catch(() => {
+        callback();
+        alert('Failed to update category');
+      })
     },
-    [getClothes]
+    [getClothes, currentUser]
   );
 
   // delete clothing
   const deleteClothing = useCallback(
-    async (id, uid) => {
-      await fetch(
-        '', {
-
-        }
-      ).then(() => getClothes(uid));
+    async (id, callback) => {
+      fetch(`${deleteClothingURL}/${id}`, {
+        method: 'delete',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials:'same-origin'
+      }).then(() => {
+        callback();
+        getClothes();
+      }).catch(() => {
+        callback();
+        alert('Failed to delete category');
+      });
     },
     [getClothes]
   );
