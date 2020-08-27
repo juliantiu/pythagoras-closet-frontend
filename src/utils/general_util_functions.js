@@ -10,3 +10,7 @@ export function getBase64(imageFile) {
     reader.onerror = error => reject(error);
   });
 }
+
+export function printLocalTime(javascriptDateObject) {
+  return javascriptDateObject.toLocaleDateString();
+}
