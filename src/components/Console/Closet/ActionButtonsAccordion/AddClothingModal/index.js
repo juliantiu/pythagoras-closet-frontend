@@ -253,7 +253,7 @@ export default function AddClothingModal() {
   return (
     <>
       <AddClothingModalForm showModal={showModal} onHideModal={onHideModal} subcategories={subcategories}/>
-      <Button className="action-button" variant="dark" onClick={onShowModal}><FontAwesomeIcon icon={faPlus}/></Button>
+      <Button className="action-button" variant="dark" onClick={onShowModal} disabled={subcategories.length === 0}><FontAwesomeIcon icon={faPlus}/></Button>
     </>
   );
 }
