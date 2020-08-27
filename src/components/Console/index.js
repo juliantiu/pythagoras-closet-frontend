@@ -70,7 +70,7 @@ function Body() {
   return (
     <Switch>
       <PrivateRoute path="/closet" component={Closet}/>
-      <PrivateRoute path="/laundrybasket" component={DirtyLaundry}/>
+      <PrivateRoute path="/dirtylaundry" component={DirtyLaundry}/>
       <PrivateRoute path="/washer" component={Washer}/>
     </Switch>
   );

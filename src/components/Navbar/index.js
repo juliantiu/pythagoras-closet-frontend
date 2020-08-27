@@ -17,7 +17,7 @@ export default function Navbar() {
       <BNavbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
           <Link to="closet" className="font-1 font-size-6 nav-link">Home</Link>
-          <Link to="laundry" className="font-1 font-size-6 nav-link">Laundry</Link>
+          <Link to="dirtylaundry" className="font-1 font-size-6 nav-link">Dirty Laundry</Link>
           <Link to="washer" className="font-1 font-size-6 nav-link">Washer</Link>
         </Nav>
         <Button variant="dark" className="ml-auto" alt="logout button" onClick={logout}><FontAwesomeIcon icon={faPowerOff} size="lg"/></Button>

@@ -11,12 +11,12 @@ const getLaundryFromUidURI = process.env.REACT_APP_API_GET_LAUNDRY_FROM_UIDS;
 const getLaundryFromClothingIdsURI = process.env.REACT_APP_API_GET_LAUNDRY_FROM_CLOTHING_IDS;
 const newLaundryURI = process.env.REACT_APP_API_NEW_LAUNDRY;
 // const updateCategoryURI = process.env.REACT_APP_API_UPDATECATEGORY;
-// const deleteCategoryURI = process.env.REACT_APP_API_DELETECATEGORY;
+const deleteLaundryURI = process.env.REACT_APP_API_DELETE_LAUNDRY;
 
 // static URL's
 const newLaundryURL = `${hostname}/${newLaundryURI}`;
 // const updateCategoryURL = `${hostname}/${updateCategoryURI}`;
-// const deleteCategoryURL = `${hostname}/${deleteCategoryURI}`;
+const deleteLaundryURL = `${hostname}/${deleteLaundryURI}`;
 
 
 export const LaundryContext = createContext({});
@@ -110,12 +110,17 @@ export const LaundryProvider = ({ children }) => {
 
   // delete laundry
   const deleteLaundry = useCallback(
-    async (id, uid) => {
-      await fetch(
-        '', {
-
-        }
-      ).then(() => getLaundryFromClothingIds());
+    id => {
+      fetch(`${deleteLaundryURL}/${id}`, {
+        method: 'delete',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials:'same-origin'
+      })
+      .then(() => getLaundryFromClothingIds())
+      .catch(() => {
+        alert('Failed to delete laundry');
+      });
     },
     [getLaundryFromClothingIds]
   );

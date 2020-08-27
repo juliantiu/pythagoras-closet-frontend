@@ -11,12 +11,12 @@ const getWasherFromUidURI = process.env.REACT_APP_API_GET_WASHER_FROM_UIDS;
 const getWasherFromClothingIdsURI = process.env.REACT_APP_API_GET_WASHER_FROM_CLOTHING_IDS;
 const newWasherURI = process.env.REACT_APP_API_NEW_WASHER;
 // const updateCategoryURI = process.env.REACT_APP_API_UPDATECATEGORY;
-// const deleteCategoryURI = process.env.REACT_APP_API_DELETECATEGORY;
+const deleteWasherURI = process.env.REACT_APP_API_DELETE_WASHER;
 
 // static URL's
 const newWasherURL = `${hostname}/${newWasherURI}`;
 // const updateCategoryURL = `${hostname}/${updateCategoryURI}`;
-// const deleteCategoryURL = `${hostname}/${deleteCategoryURI}`;
+const deleteWasherURL = `${hostname}/${deleteWasherURI}`;
 
 
 export const WasherContext = createContext({});
@@ -111,12 +111,17 @@ export const WasherProvider = ({ children }) => {
 
   // delete washer
   const deleteWasher = useCallback(
-    async (id, uid) => {
-      await fetch(
-        '', {
-
-        }
-      ).then(() => getWasherFromClothingIds());
+    id => {
+      fetch(`${deleteWasherURL}/${id}`, {
+        method: 'delete',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials:'same-origin'
+      })
+      .then(() => getWasherFromClothingIds())
+      .catch(() => {
+        alert('Failed to delete washer');
+      });
     },
     [getWasherFromClothingIds]
   );
