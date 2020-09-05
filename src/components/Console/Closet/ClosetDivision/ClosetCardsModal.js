@@ -84,9 +84,10 @@ function InfoModal(props) {
 
   const onSaveOrDeleteCallback = useCallback(
     () => {
+      setIsLoading(false);
       onSaveFormModals(modalEnum.info);
     },
-    [onSaveFormModals]
+    [onSaveFormModals, setIsLoading]
   );
 
   const onSave = useCallback(
