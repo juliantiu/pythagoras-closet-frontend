@@ -91,13 +91,14 @@ export const LaundryProvider = ({ children }) => {
       })
       .then(() => {
         callback();
-        getLaundryFromClothingIds();
+        getLaundryFromUids();
       })
       .catch(() => {
         alert('Failed to add laundry');
+        callback();
       })
     },
-    [getLaundryFromClothingIds, currentUser]
+    [getLaundryFromUids, currentUser]
   );
 
   // update laundry
@@ -107,9 +108,9 @@ export const LaundryProvider = ({ children }) => {
         '', {
 
         }
-      ).then(() => getLaundryFromClothingIds());
+      ).then(() => getLaundryFromUids());
     },
-    [getLaundryFromClothingIds]
+    [getLaundryFromUids]
   );
 
   // delete laundry
@@ -121,12 +122,12 @@ export const LaundryProvider = ({ children }) => {
         cache: 'no-cache',
         credentials:'same-origin'
       })
-      .then(() => getLaundryFromClothingIds())
+      .then(() => getLaundryFromUids())
       .catch(() => {
         alert('Failed to delete laundry');
       });
     },
-    [getLaundryFromClothingIds]
+    [getLaundryFromUids]
   );
 
   return (

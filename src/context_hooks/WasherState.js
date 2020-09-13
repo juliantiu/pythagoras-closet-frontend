@@ -87,14 +87,14 @@ export const WasherProvider = ({ children }) => {
       })
       .then(() => { 
         callback();
-        getWasherFromClothingIds();
+        getWasherFromUids();
       })
       .catch(() => {
         callback();
         alert('Failed to add washer');
       });
     },
-    [getWasherFromClothingIds]
+    [getWasherFromUids]
   );
 
   // update washer
@@ -118,12 +118,12 @@ export const WasherProvider = ({ children }) => {
         cache: 'no-cache',
         credentials:'same-origin'
       })
-      .then(() => getWasherFromClothingIds())
+      .then(() => getWasherFromUids())
       .catch(() => {
         alert('Failed to delete washer');
       });
     },
-    [getWasherFromClothingIds]
+    [getWasherFromUids]
   );
 
   return (
