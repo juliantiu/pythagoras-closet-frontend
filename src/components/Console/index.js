@@ -19,8 +19,8 @@ function Body() {
   const { categories, getCategories } = useCategoryState();
   const { subcategories, getSubcategories } = useSubcategoryState();
   const { clothes, getClothes } = useClothingState();
-  const { getLaundryFromClothingIds } = useLaundryState(); 
-  const { getWasherFromClothingIds } = useWasherState();
+  const { getLaundryFromUids } = useLaundryState(); 
+  const { getWasherFromUids } = useWasherState();
 
   useEffect(
     () => {
@@ -45,16 +45,16 @@ function Body() {
 
   useEffect(
     () => {
-      getLaundryFromClothingIds();
+      getLaundryFromUids();
     },
-    [getLaundryFromClothingIds]
+    [getLaundryFromUids]
   );
 
   useEffect(
     () => {
-      getWasherFromClothingIds();
+      getWasherFromUids();
     },
-    [getWasherFromClothingIds]
+    [getWasherFromUids]
   )
 
   if (categories === undefined || subcategories === undefined || clothes === undefined) {

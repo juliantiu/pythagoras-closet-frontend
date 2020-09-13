@@ -39,7 +39,10 @@ export const LaundryProvider = ({ children }) => {
       )
       .then(resp => resp.json())
       .then(data => setLaundry(data))
-      .catch(() => { alert('Failed to get laundry'); })
+      .catch((error) => { 
+        console.log(error);
+        alert('Failed to get laundry');
+      });
     },
     [setLaundry, currentUser]
   );
@@ -83,6 +86,7 @@ export const LaundryProvider = ({ children }) => {
         body: JSON.stringify({
           clothingId,
           dateUsed,
+          uid: currentUser.uid,
         })
       })
       .then(() => {
@@ -93,7 +97,7 @@ export const LaundryProvider = ({ children }) => {
         alert('Failed to add laundry');
       })
     },
-    [getLaundryFromClothingIds]
+    [getLaundryFromClothingIds, currentUser]
   );
 
   // update laundry
