@@ -61,3 +61,8 @@
   color: #FFF;
   font-weight: bold;
 }
+
+.subcategory-name {
+  width: 100%;
+  text-align: center;
+}

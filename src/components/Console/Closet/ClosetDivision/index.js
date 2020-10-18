@@ -73,7 +73,7 @@ function generateSubcategoriesJSX(subcategoriesList, onShowIntermediateModal, us
       return (
         <Fragment key={`closet-subcategory-${subcategory.id}`}>
           <Row className="mb-2">
-            <Col xs={12}><h5>{subcategory.name}</h5></Col>
+            <Col xs={12}><h5 className="subcategory-name">{subcategory.name}</h5></Col>
           </Row>
           <div className="d-flex justify-content-center justify-content-sm-around justify-content-lg-start flex-wrap">
             {generateClothesJSX(subcategory.clothes, onShowIntermediateModal, usageLookup)}
@@ -170,7 +170,7 @@ export default function ClosetDivision() {
               <Accordion>
                 <Card>
                   <Card.Header>
-                    <Accordion.Toggle as={Button} variant="light" eventKey={category.id}>{category.name}</Accordion.Toggle>
+                    <Accordion.Toggle as={Button} variant="light" eventKey={category.id}><h3>{category.name}</h3></Accordion.Toggle>
                   </Card.Header>
                   <Accordion.Collapse eventKey={category.id}>
                     <Card.Body>{generateSubcategoriesJSX(category.subcategories, onShowIntermediateModal, usageLookup)}</Card.Body>

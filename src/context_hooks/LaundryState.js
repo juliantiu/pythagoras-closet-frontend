@@ -28,9 +28,9 @@ export const LaundryProvider = ({ children }) => {
 
   // get laundry
   const getLaundryFromUids = useCallback(
-    () => {
+    (startDate) => {
       fetch(
-        `${hostname}/${getLaundryFromUidURI}/${currentUser.uid}`, {
+        `${hostname}/${getLaundryFromUidURI}/${currentUser.uid}?startDate=${startDate.toString()}`, {
           method: 'GET', 
           mode: 'cors',
           cache: 'no-cache',
@@ -40,7 +40,6 @@ export const LaundryProvider = ({ children }) => {
       .then(resp => resp.json())
       .then(data => setLaundry(data))
       .catch((error) => { 
-        console.log(error);
         alert('Failed to get laundry');
       });
     },
@@ -89,16 +88,23 @@ export const LaundryProvider = ({ children }) => {
           uid: currentUser.uid,
         })
       })
-      .then(() => {
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setLaundry((prev) => {
+          const prevCopy = [...prev];
+          prevCopy.unshift(data);
+          return prevCopy;
+        });
         callback();
-        getLaundryFromUids();
       })
       .catch(() => {
         alert('Failed to add laundry');
         callback();
       })
     },
-    [getLaundryFromUids, currentUser]
+    [setLaundry, currentUser]
   );
 
   // update laundry
@@ -122,12 +128,12 @@ export const LaundryProvider = ({ children }) => {
         cache: 'no-cache',
         credentials:'same-origin'
       })
-      .then(() => getLaundryFromUids())
+      .then(() => setLaundry(prev => prev.filter(deletedLaundry => deletedLaundry.id !== id)))
       .catch(() => {
         alert('Failed to delete laundry');
       });
     },
-    [getLaundryFromUids]
+    [setLaundry]
   );
 
   return (

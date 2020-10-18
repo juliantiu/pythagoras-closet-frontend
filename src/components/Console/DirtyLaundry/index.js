@@ -7,6 +7,7 @@ import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { formatDateToYYYYMMDD } from '../../../utils/general_util_functions';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import { DateTime } from 'luxon';
 
 function generateListOfSubcategories(selectedCategory, subcategories) {
   if (subcategories === undefined) return [];
@@ -44,7 +45,7 @@ function generateLaundryList(selectedClothing, listOfClothes, laundry) {
 }
 
 export default function DirtyLaundry() {
-  const { laundry, deleteLaundry } = useLaundryState();
+  const { laundry, deleteLaundry, getLaundryFromUids } = useLaundryState();
   const { categories } = useCategoryState();
   const { subcategories } = useSubcategoryState();
   const { clothes } = useClothingState();
@@ -52,6 +53,8 @@ export default function DirtyLaundry() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedSubcategory, setSelectedSubcategory] = useState('All');
   const [selectedClothing, setSelectedClothing] = useState('All');
+  const [selectedStartDate, setSelectedStartDate] = useState('Last month');
+  const [tableTitle, setTableTitle] = useState('Starting from last month');
 
   const onCategoryChange = useCallback(
     event => {
@@ -77,6 +80,43 @@ export default function DirtyLaundry() {
       setSelectedClothing(value);
     },
     [setSelectedClothing]
+  );
+
+  const onStartDateChange = useCallback(
+    event => {
+      const { value } = event.target;
+      setSelectedStartDate(value);
+    },
+    [setSelectedStartDate]
+  );
+
+  const onFilter = useCallback(
+    () => {
+      let newDate = DateTime.local().startOf('day');
+      const tableTitleStartDate = `${selectedStartDate[0].toLowerCase()}${selectedStartDate.slice(1)}`;
+      switch (selectedStartDate) {
+        case 'All time':
+          newDate = DateTime.fromObject({ year: 1970, month: 1, day: 1 });
+          break;
+        case 'Today':
+          break;
+        case 'Last week':
+          newDate = newDate.minus({ days: 7 })
+          break;
+        case 'Last month':
+          newDate = newDate.minus({ month: 1 });
+          break;
+        case 'Last year':
+          newDate = newDate.minus({ year: 1 });
+          break;
+        default:
+          newDate = newDate.minus({ month: 1 });
+          break;
+      }
+      getLaundryFromUids(newDate);
+      setTableTitle(`Starting from ${tableTitleStartDate}`);
+    },
+    [setTableTitle, getLaundryFromUids, selectedStartDate]
   );
 
   useEffect(
@@ -187,26 +227,39 @@ export default function DirtyLaundry() {
         <Col xs={12} className="mt-3">
           <Form>
             <Form.Row>
-              <Col xs={12} lg={4} className="mb-2 mb-lg-0">
+              <Col xs={12} lg={2} className="mb-2 mb-lg-0">
                 <Form.Label>Category</Form.Label>
                 <Form.Control as="select" onChange={onCategoryChange} value={selectedCategory}>
                   <option value="All">All</option>
                   {categoryOptions}
                 </Form.Control>
               </Col>
-              <Col xs={12} lg={4} className="mb-2 mb-lg-0">
+              <Col xs={12} lg={2} className="mb-2 mb-lg-0">
                 <Form.Label>Subcategory</Form.Label>
                 <Form.Control as="select" onChange={onSubcategoryChange} value={selectedSubcategory}>
                   <option value="All">All</option>
                   {subcategoryOptions}
                 </Form.Control>
               </Col>
-              <Col xs={12} lg={4} className="mb-2 mb-lg-0">
+              <Col xs={12} lg={2} className="mb-2 mb-lg-0">
                 <Form.Label>Clothing</Form.Label>
                 <Form.Control as="select" onChange={onClothingChange} value={selectedClothing}>
                   <option value="All">All</option>
                   {clothingOptions}
                 </Form.Control>
+              </Col>
+              <Col xs={12} lg={2} className="mb-2 mb-lg-0">
+                <Form.Label>Start Date</Form.Label>
+                <Form.Control as="select" onChange={onStartDateChange} value={selectedStartDate}>
+                  <option value="All time">All time</option>
+                  <option value="Today">Today</option>
+                  <option value="Last week">Last week</option>
+                  <option value="Last month">Last month</option>
+                  <option value="Last year">Last year</option>
+                </Form.Control>
+              </Col>
+              <Col xs={12} lg={2} className="mb-2 mb-lg-0 d-flex align-items-end pl-lg-1">
+                <Button onClick={onFilter} variant="dark">Filter</Button>
               </Col>
             </Form.Row>
           </Form>
@@ -214,6 +267,7 @@ export default function DirtyLaundry() {
       </Row>
       <Row>
         <Col xs={12}>
+          <h3>{tableTitle}</h3>
           <BootstrapTable
             keyField='id'
             columns={columns}

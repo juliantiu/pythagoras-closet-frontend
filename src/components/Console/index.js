@@ -3,6 +3,7 @@ import Navbar from '../Navbar';
 import Closet from './Closet';
 
 import { Row, Col } from 'react-bootstrap';
+import { DateTime } from 'luxon';
 
 import { CategoryProvider, useCategoryState } from '../../context_hooks/CategoryState';
 import { SubcategoryProvider, useSubcategoryState } from '../../context_hooks/SubcategoryState';
@@ -14,6 +15,9 @@ import { Switch } from "react-router-dom";
 import PrivateRoute from '../../hocs/PrivateRoute';
 import DirtyLaundry from './DirtyLaundry';
 import Washer from './Washer';
+
+const lastMonthDate = DateTime.local().startOf('day');
+lastMonthDate.minus({ month: 1 });
 
 function Body() {
   const { categories, getCategories } = useCategoryState();
@@ -45,14 +49,16 @@ function Body() {
 
   useEffect(
     () => {
-      getLaundryFromUids();
+      // Initial get request from the last month
+      getLaundryFromUids(lastMonthDate);
     },
     [getLaundryFromUids]
   );
 
   useEffect(
     () => {
-      getWasherFromUids();
+      // Initial get request from the last month
+      getWasherFromUids(lastMonthDate);
     },
     [getWasherFromUids]
   )

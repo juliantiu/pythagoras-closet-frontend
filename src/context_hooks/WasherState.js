@@ -28,9 +28,9 @@ export const WasherProvider = ({ children }) => {
 
   // get washer
   const getWasherFromUids = useCallback(
-    () => {
+    (startDate) => {
       fetch(
-        `${hostname}/${getWasherFromUidURI}/${currentUser.uid}`, {
+        `${hostname}/${getWasherFromUidURI}/${currentUser.uid}?startDate=${startDate.toString()}`, {
           method: 'GET', 
           mode: 'cors',
           cache: 'no-cache',
@@ -83,18 +83,26 @@ export const WasherProvider = ({ children }) => {
         body: JSON.stringify({
           clothingId,
           washDate,
+          uid: currentUser.uid
         })
       })
-      .then(() => { 
+      .then((response) => { 
+        return response.json();
+      })
+      .then((data) => {
+        setWasher((prev) => {
+          const prevCopy = [...prev];
+          prevCopy.unshift(data);
+          return prevCopy;
+        });
         callback();
-        getWasherFromUids();
       })
       .catch(() => {
         callback();
         alert('Failed to add washer');
       });
     },
-    [getWasherFromUids]
+    [currentUser, setWasher]
   );
 
   // update washer
@@ -118,12 +126,16 @@ export const WasherProvider = ({ children }) => {
         cache: 'no-cache',
         credentials:'same-origin'
       })
-      .then(() => getWasherFromUids())
+      .then(() => {
+        setWasher((prev) => {
+          return prev.filter(deletedWasher => deletedWasher.id !== id);
+        });
+      })
       .catch(() => {
         alert('Failed to delete washer');
       });
     },
-    [getWasherFromUids]
+    [setWasher]
   );
 
   return (
