@@ -3,9 +3,10 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { useClothingState } from '../../../../../context_hooks/ClothingState';
 import { useCategoryState } from '../../../../../context_hooks/CategoryState';
 import { useSubcategoryState } from '../../../../../context_hooks/SubcategoryState';
-import { formatDateToYYYYMMDD, getBase64 } from '../../../../../utils/general_util_functions';
+import { getBase64 } from '../../../../../utils/general_util_functions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { DateTime } from 'luxon';
 
 function AddClothingModalForm(props) {
   const { showModal, onHideModal, subcategories} = props;
@@ -18,8 +19,8 @@ function AddClothingModalForm(props) {
   const [thumbnailString, setThumbnailString] = useState('');
   const [usagePerLaundry, setUsagePerLaundry] = useState(1);
   const [dateBought, setDateBought] = useState(() => {
-    let todayDate = new Date();
-    return formatDateToYYYYMMDD(todayDate);
+    const todayDate = DateTime.local();
+    return todayDate.toISODate();
   });
 
   useEffect(
@@ -53,8 +54,8 @@ function AddClothingModalForm(props) {
       setLabel('');
       setUsagePerLaundry(1);
       setDateBought(() => {
-        let todayDate = new Date();
-        return formatDateToYYYYMMDD(todayDate);
+        const todayDate = DateTime.local();
+        return todayDate.toISODate();
       });
       onHideModal();
     }, [
@@ -79,8 +80,8 @@ function AddClothingModalForm(props) {
       setLabel('');
       setUsagePerLaundry(1);
       setDateBought(() => {
-        let todayDate = new Date();
-        return formatDateToYYYYMMDD(todayDate);
+        const todayDate = DateTime.local();
+        return todayDate.toISODate();
       });
       onHideModal();
     }, [
@@ -162,7 +163,7 @@ function AddClothingModalForm(props) {
   const onDateBoughtChange = useCallback(
     event => {
       const { value } = event.target;
-      setDateBought(() => formatDateToYYYYMMDD(new Date(value)));
+      setDateBought(() => DateTime.fromISO(value).toISODate());
     },
     [setDateBought]
   );

@@ -58,10 +58,15 @@ export const SubcategoryProvider = ({ children }) => {
           uid: currentUser.uid
         })
       })
-      .then(() => getSubcategories())
+      .then(resp => resp.json())
+      .then(data => setSubcategories(prev => {
+        const prevCopy = [...prev];
+        prevCopy.push(data);
+        return prevCopy;
+      }))
       .catch(() => { alert('Failed to add subcategory'); });
     },
-    [getSubcategories, currentUser]
+    [setSubcategories, currentUser]
   );
 
   // update subcategory
@@ -82,14 +87,22 @@ export const SubcategoryProvider = ({ children }) => {
           uid: currentUser.uid
         })
       }).then(() => {
+        setSubcategories((prev) => {
+          return prev.map(subcategory => {
+            if (subcategory.id === id) {
+              subcategory.name = name;
+              subcategory.categoryId = categoryId;
+            }
+            return subcategory;
+          });
+        });
         callback();
-        getSubcategories();
       }).catch(() => {
         callback();
         alert('Failed to update category');
       })
     },
-    [getSubcategories, currentUser]
+    [setSubcategories, currentUser]
   );
 
   // delete subcategory
@@ -101,14 +114,16 @@ export const SubcategoryProvider = ({ children }) => {
         cache: 'no-cache',
         credentials:'same-origin'
       }).then(() => {
+        setSubcategories(prev => {
+          return prev.filter(subcategory => subcategory.id !== id);
+        });
         callback();
-        getSubcategories();
       }).catch(() => {
         callback();
         alert('Failed to delete subcategory');
       });
     },
-    [getSubcategories]
+    [setSubcategories]
   );
 
   return (

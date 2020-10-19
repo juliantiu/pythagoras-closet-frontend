@@ -57,10 +57,15 @@ export const CategoryProvider = ({ children }) => {
           uid: currentUser.uid
         })
       })
-      .then(() => getCategories())
+      .then(resp => resp.json())
+      .then(data => setCategories((prev) => {
+        const prevCopy = [...prev];
+        prevCopy.push(data);
+        return prevCopy;
+      }))
       .catch(() => { alert('Failed to add category'); });
     },
-    [getCategories, currentUser]
+    [setCategories, currentUser]
   );
 
   // update categories
@@ -79,14 +84,21 @@ export const CategoryProvider = ({ children }) => {
           uid: currentUser.uid
         })
       }).then(() => {
+        setCategories((prev) => {
+          return prev.map(category => {
+            if (category.id === id) {
+              category.name = name;
+            }
+            return category;
+          });
+        });
         callback();
-        getCategories();
       }).catch(() => {
         callback();
         alert('Failed to update category');
       })
     },
-    [getCategories, currentUser]
+    [setCategories, currentUser]
   );
 
   // delete categories
@@ -98,14 +110,16 @@ export const CategoryProvider = ({ children }) => {
         cache: 'no-cache',
         credentials:'same-origin'
       }).then(() => {
+        setCategories(prev => {
+          return prev.filter(category => category.id !== id);
+        });
         callback();
-        getCategories();
       }).catch(() => {
         callback();
         alert('Failed to delete category');
       });
     },
-    [getCategories]
+    [setCategories]
   );
 
   return (

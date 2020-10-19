@@ -5,7 +5,8 @@ import { useClothingState } from '../../../../context_hooks/ClothingState';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useLaundryState } from '../../../../context_hooks/LaundryState';
 import { useWasherState } from '../../../../context_hooks/WasherState';
-import { formatDateToYYYYMMDD, getBase64 } from '../../../../utils/general_util_functions';
+import { getBase64 } from '../../../../utils/general_util_functions';
+import { DateTime } from 'luxon';
 import './index.css';
 
 const modalEnum = {
@@ -27,7 +28,7 @@ function InfoModal(props) {
   const [notes, setNotes] = useState('');
   const [thumbnailString, setThumbnailString] = useState('');
   const [usagePerLaundry, setUsagePerLaundry] = useState(0);
-  const [dateBought, setDateBought] = useState(formatDateToYYYYMMDD(new Date()));
+  const [dateBought, setDateBought] = useState(DateTime.local().toISODate());
 
   useEffect(
     () => {
@@ -40,7 +41,7 @@ function InfoModal(props) {
       setNotes(() => selectedClothing.notes);
       setThumbnailString(() => selectedClothing.thumbnail);
       setUsagePerLaundry(() => selectedClothing.usagePerLaundry);
-      setDateBought(() => formatDateToYYYYMMDD(new Date(selectedClothing.dateBought)));
+      setDateBought(() => DateTime.fromISO(selectedClothing.dateBought).toISODate());
     },
     [
       selectedClothing,
@@ -65,7 +66,7 @@ function InfoModal(props) {
       setNotes(() => selectedClothing.notes);
       setThumbnailString(() => selectedClothing.thumbnail);
       setUsagePerLaundry(() => selectedClothing.usagePerLaundry);
-      setDateBought(() => formatDateToYYYYMMDD(new Date(selectedClothing.dateBought)));
+      setDateBought(() => DateTime.fromISO(selectedClothing.dateBought).toISODate());
       onHideFormModals(modalEnum.info);
     },
     [
@@ -184,7 +185,7 @@ function InfoModal(props) {
   const onDateBoughtChange = useCallback(
     event => {
       const { value } = event.target;
-      setDateBought(() => formatDateToYYYYMMDD(new Date(value)));
+      setDateBought(() => DateTime.fromISO(value).toISODate());
     },
     [setDateBought]
   );
@@ -258,14 +259,13 @@ function InfoModal(props) {
 function UseModal(props) {
   const { showUseModal, onHideFormModals, onSaveFormModals, id } = props;
   const { addLaundry } = useLaundryState();
-  const [dateUsed, setDateUsed] = useState(new Date().toISOString().split('T')[0]);
+  const [dateUsed, setDateUsed] = useState(DateTime.local().toISODate());
   const [isLoading, setIsLoading] = useState(false);
 
   const onChangeDate = useCallback(
     (event) => {
       const { value } = event.target;
-      const newDate = new Date(value);
-      setDateUsed(formatDateToYYYYMMDD(newDate));
+      setDateUsed(() => DateTime.fromISO(value).toISODate());
     },
     [setDateUsed]
   );
@@ -289,8 +289,7 @@ function UseModal(props) {
 
   const onCancel = useCallback(
     () => {
-      const todayDate = new Date();
-      setDateUsed(formatDateToYYYYMMDD(todayDate));
+      setDateUsed(DateTime.local().toISODate());
       onHideFormModals(modalEnum.use);
     },
     [onHideFormModals]
@@ -316,7 +315,7 @@ function UseModal(props) {
 function WashModal(props) {
   const { showWashModal, onHideFormModals, onSaveFormModals, id } = props;
   const { addWasher } = useWasherState();
-  const [washDate, setWashDate] = useState(formatDateToYYYYMMDD(new Date()));
+  const [washDate, setWashDate] = useState(DateTime.local().toISODate());
   const [isLoading, setIsLoading] = useState(false);
   
   const afterSaveCallback = useCallback(
@@ -337,8 +336,7 @@ function WashModal(props) {
 
   const onCancel = useCallback(
     () => {
-      const todayDate = new Date();
-      setWashDate(formatDateToYYYYMMDD(todayDate));
+      setWashDate(DateTime.local().toISODate());
       onHideFormModals(modalEnum.wash);
     },
     [setWashDate, onHideFormModals]
@@ -347,8 +345,7 @@ function WashModal(props) {
   const onChangeDate = useCallback(
     (event) => {
       const { value } = event.target;
-      const newDate = new Date(value);
-      setWashDate(formatDateToYYYYMMDD(newDate));
+      setWashDate(DateTime.fromISO(value).toISODate());
     },
     [setWashDate]
   );

@@ -62,10 +62,15 @@ export const ClothingProvider = ({ children }) => {
           notes
         })
       })
-      .then(() => getClothes())
+      .then(resp => resp.json())
+      .then(data => setClothes(prev => {
+        const prevCopy = [...prev];
+        prevCopy.push(data);
+        return prevCopy;
+      }))
       .catch(() => { alert('Failed to add clothing'); });
     },
-    [getClothes, currentUser]
+    [setClothes, currentUser]
   );
 
   // update clothing
@@ -90,14 +95,28 @@ export const ClothingProvider = ({ children }) => {
           notes
         })
       }).then(() => {
+        setClothes(prev => {
+          return prev.map(
+            clothing => {
+              if (clothing.id === id) {
+                clothing.subcategory = subcategory;
+                clothing.label = label; 
+                clothing.thumbnail = thumbnail; 
+                clothing.usagePerLaundry = usagePerLaundry; 
+                clothing.dateBought = dateBought; 
+                clothing.notes = notes; 
+              }
+              return clothing;
+            }
+          );
+        });
         callback();
-        getClothes();
       }).catch(() => {
         callback();
         alert('Failed to update category');
       })
     },
-    [getClothes, currentUser]
+    [setClothes, currentUser]
   );
 
   // delete clothing
@@ -109,14 +128,16 @@ export const ClothingProvider = ({ children }) => {
         cache: 'no-cache',
         credentials:'same-origin'
       }).then(() => {
+        setClothes(prev => {
+          return prev.filter(clothing => clothing.id !== id);
+        });
         callback();
-        getClothes();
       }).catch(() => {
         callback();
         alert('Failed to delete category');
       });
     },
-    [getClothes]
+    [setClothes]
   );
 
   return (
