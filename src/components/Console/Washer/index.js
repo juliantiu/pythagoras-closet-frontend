@@ -23,7 +23,7 @@ function generateListOfClothes(listOfSubcategories, clothes) {
   return clothes.filter(clothing => listOfSubcategoryIds.includes(clothing.subcategoryId));
 }
 
-function generateWasherList(selectedClothing, listOfClothes, washer) {
+function generateWasherList(selectedStartDateVal, selectedClothing, listOfClothes, washer) {
   if (washer === undefined) return [];
   const clothesLookup = listOfClothes.reduce(
     (lookup, clothing) => {
@@ -37,15 +37,15 @@ function generateWasherList(selectedClothing, listOfClothes, washer) {
   const listOfClothingIds = listOfClothes.map(clothing => clothing.id);
   return selectedClothing === 'All' ?
     washer
-      .filter(laun => listOfClothingIds.includes(laun.clothingId))
+      .filter(laun => listOfClothingIds.includes(laun.clothingId) && DateTime.fromISO(laun.washDate) >= selectedStartDateVal)
       .map(washer => ({ id: washer.id, label: clothesLookupWrapper(washer.clothingId), washDate: formatDateToYYYYMMDD(new Date(washer.washDate)) })) :
     washer
-      .filter(laun => laun.clothingId === selectedClothing)
+      .filter(laun => laun.clothingId === selectedClothing && DateTime.fromISO(laun.washDate) >= selectedStartDateVal)
       .map(washer => ({ id: washer.id, label: clothesLookupWrapper(washer.clothingId), washDate: formatDateToYYYYMMDD(new Date(washer.washDate)) }));
 }
 
 export default function Washer() {
-  const { washer, deleteWasher, getWasherFromUids } = useWasherState();
+  const { washer, deleteWasher } = useWasherState();
   const { categories } = useCategoryState();
   const { subcategories } = useSubcategoryState();
   const { clothes } = useClothingState();
@@ -54,6 +54,7 @@ export default function Washer() {
   const [selectedSubcategory, setSelectedSubcategory] = useState('All');
   const [selectedClothing, setSelectedClothing] = useState('All');
   const [selectedStartDate, setSelectedStartDate] = useState('Last month');
+  const [selectedStartDateVal, setSelectedStartDateVal] = useState(DateTime.local());
   const [tableTitle, setTableTitle] = useState('Starting from last month');
 
   const onCategoryChange = useCallback(
@@ -96,9 +97,6 @@ export default function Washer() {
 
       const tableTitleStartDate = `${selectedStartDate[0].toLowerCase()}${selectedStartDate.slice(1)}`;
       switch (selectedStartDate) {
-        case 'All time':
-          newDate = DateTime.fromObject({ year: 1970, month: 1, day: 1 });
-          break;
         case 'Today':
           break;
         case 'Last week':
@@ -114,10 +112,10 @@ export default function Washer() {
           newDate = newDate.minus({ month: 1 });
           break;
       }
-      getWasherFromUids(newDate);
+      setSelectedStartDateVal(newDate);
       setTableTitle(`Starting from ${tableTitleStartDate}`);
     },
-    [setTableTitle, getWasherFromUids, selectedStartDate]
+    [setTableTitle, setSelectedStartDateVal, selectedStartDate]
   );
 
   useEffect(
@@ -189,9 +187,9 @@ export default function Washer() {
         }]
       };
 
-      return [generateWasherList(selectedClothing, listOfClothes, washer), options];
+      return [generateWasherList(selectedStartDateVal, selectedClothing, listOfClothes, washer), options];
     },
-    [selectedCategory, selectedClothing, subcategories, clothes, washer]
+    [selectedCategory, selectedClothing, subcategories, clothes, washer, selectedStartDateVal]
   );
 
   const deleteWasherHandler = useCallback(
@@ -252,7 +250,6 @@ export default function Washer() {
               <Col xs={12} lg={2} className="mb-2 mb-lg-0">
                 <Form.Label>Start Date</Form.Label>
                 <Form.Control as="select" onChange={onStartDateChange} value={selectedStartDate}>
-                  <option value="All time">All time</option>
                   <option value="Today">Today</option>
                   <option value="Last week">Last week</option>
                   <option value="Last month">Last month</option>

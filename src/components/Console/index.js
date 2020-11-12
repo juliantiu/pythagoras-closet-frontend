@@ -16,9 +16,6 @@ import PrivateRoute from '../../hocs/PrivateRoute';
 import DirtyLaundry from './DirtyLaundry';
 import Washer from './Washer';
 
-const lastMonthDate = DateTime.local().startOf('day');
-lastMonthDate.minus({ month: 1 });
-
 function Body() {
   const { categories, getCategories } = useCategoryState();
   const { subcategories, getSubcategories } = useSubcategoryState();
@@ -49,16 +46,20 @@ function Body() {
 
   useEffect(
     () => {
-      // Initial get request from the last month
-      getLaundryFromUids(lastMonthDate);
+      // Initial get request from the last year
+      const todayDate = DateTime.local().startOf('day');
+      const lastMonthDate = todayDate.minus({ month: 12 });
+      getLaundryFromUids(lastMonthDate.toJSDate());
     },
     [getLaundryFromUids]
   );
 
   useEffect(
     () => {
-      // Initial get request from the last month
-      getWasherFromUids(lastMonthDate);
+      // Initial get request from the last year
+      const todayDate = DateTime.local().startOf('day');
+      const lastMonthDate = todayDate.minus({ month: 12 });
+      getWasherFromUids(lastMonthDate.toJSDate());
     },
     [getWasherFromUids]
   )

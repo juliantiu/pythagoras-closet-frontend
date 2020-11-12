@@ -102,7 +102,7 @@ export const ClothingProvider = ({ children }) => {
                 clothing.subcategory = subcategory;
                 clothing.label = label; 
                 clothing.thumbnail = thumbnail; 
-                clothing.usagePerLaundry = usagePerLaundry; 
+                clothing.usagePerLaundry = +usagePerLaundry; 
                 clothing.dateBought = dateBought; 
                 clothing.notes = notes; 
               }

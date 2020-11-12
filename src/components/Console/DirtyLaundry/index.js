@@ -23,7 +23,7 @@ function generateListOfClothes(listOfSubcategories, clothes) {
   return clothes.filter(clothing => listOfSubcategoryIds.includes(clothing.subcategoryId));
 }
 
-function generateLaundryList(selectedClothing, listOfClothes, laundry) {
+function generateLaundryList(selectedStartDateVal, selectedClothing, listOfClothes, laundry) {
   if (laundry === undefined) return [];
   const clothesLookup = listOfClothes.reduce(
     (lookup, clothing) => {
@@ -37,15 +37,15 @@ function generateLaundryList(selectedClothing, listOfClothes, laundry) {
   const listOfClothingIds = listOfClothes.map(clothing => clothing.id);
   return selectedClothing === 'All' ?
     laundry
-      .filter(laun => listOfClothingIds.includes(laun.clothingId))
+      .filter(laun => listOfClothingIds.includes(laun.clothingId) && DateTime.fromISO(laun.dateUsed) >= selectedStartDateVal)
       .map(laund => ({ id: laund.id, label: clothesLookupWrapper(laund.clothingId), dateUsed: formatDateToYYYYMMDD(new Date(laund.dateUsed)) })) :
     laundry
-      .filter(laun => laun.clothingId === selectedClothing)
+      .filter(laun => laun.clothingId === selectedClothing && DateTime.fromISO(laun.dateUsed) >= selectedStartDateVal)
       .map(laund => ({ id: laund.id, label: clothesLookupWrapper(laund.clothingId), dateUsed: formatDateToYYYYMMDD(new Date(laund.dateUsed)) }));
 }
 
 export default function DirtyLaundry() {
-  const { laundry, deleteLaundry, getLaundryFromUids } = useLaundryState();
+  const { laundry, deleteLaundry } = useLaundryState();
   const { categories } = useCategoryState();
   const { subcategories } = useSubcategoryState();
   const { clothes } = useClothingState();
@@ -54,6 +54,7 @@ export default function DirtyLaundry() {
   const [selectedSubcategory, setSelectedSubcategory] = useState('All');
   const [selectedClothing, setSelectedClothing] = useState('All');
   const [selectedStartDate, setSelectedStartDate] = useState('Last month');
+  const [selectedStartDateVal, setSelectedStartDateVal] = useState(DateTime.local());
   const [tableTitle, setTableTitle] = useState('Starting from last month');
 
   const onCategoryChange = useCallback(
@@ -95,9 +96,6 @@ export default function DirtyLaundry() {
       let newDate = DateTime.local().startOf('day');
       const tableTitleStartDate = `${selectedStartDate[0].toLowerCase()}${selectedStartDate.slice(1)}`;
       switch (selectedStartDate) {
-        case 'All time':
-          newDate = DateTime.fromObject({ year: 1970, month: 1, day: 1 });
-          break;
         case 'Today':
           break;
         case 'Last week':
@@ -113,10 +111,10 @@ export default function DirtyLaundry() {
           newDate = newDate.minus({ month: 1 });
           break;
       }
-      getLaundryFromUids(newDate);
+      setSelectedStartDateVal(newDate);
       setTableTitle(`Starting from ${tableTitleStartDate}`);
     },
-    [setTableTitle, getLaundryFromUids, selectedStartDate]
+    [setTableTitle, setSelectedStartDateVal, selectedStartDate]
   );
 
   useEffect(
@@ -188,9 +186,9 @@ export default function DirtyLaundry() {
         }]
       };
 
-      return [generateLaundryList(selectedClothing, listOfClothes, laundry), options];
+      return [generateLaundryList(selectedStartDateVal, selectedClothing, listOfClothes, laundry), options];
     },
-    [selectedCategory, selectedClothing, subcategories, clothes, laundry]
+    [selectedCategory, selectedClothing, subcategories, clothes, laundry, selectedStartDateVal]
   );
 
   const deleteLaundryHandler = useCallback(
@@ -251,7 +249,6 @@ export default function DirtyLaundry() {
               <Col xs={12} lg={2} className="mb-2 mb-lg-0">
                 <Form.Label>Start Date</Form.Label>
                 <Form.Control as="select" onChange={onStartDateChange} value={selectedStartDate}>
-                  <option value="All time">All time</option>
                   <option value="Today">Today</option>
                   <option value="Last week">Last week</option>
                   <option value="Last month">Last month</option>
