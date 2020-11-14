@@ -38,7 +38,7 @@ function generateLaundryList(selectedStartDateVal, selectedClothing, listOfCloth
   return selectedClothing === 'All' ?
     laundry
       .filter(laun => listOfClothingIds.includes(laun.clothingId) && DateTime.fromISO(laun.dateUsed) >= selectedStartDateVal)
-      .map(laund => ({ id: laund.id, label: clothesLookupWrapper(laund.clothingId), dateUsed: formatDateToYYYYMMDD(new Date(laund.dateUsed)) })) :
+      .map(laund => ({ id: laund.id, clothingId: laund.clothingId, label: clothesLookupWrapper(laund.clothingId), dateUsed: formatDateToYYYYMMDD(new Date(laund.dateUsed)) })) :
     laundry
       .filter(laun => laun.clothingId === selectedClothing && DateTime.fromISO(laun.dateUsed) >= selectedStartDateVal)
       .map(laund => ({ id: laund.id, label: clothesLookupWrapper(laund.clothingId), dateUsed: formatDateToYYYYMMDD(new Date(laund.dateUsed)) }));
@@ -193,7 +193,7 @@ export default function DirtyLaundry() {
 
   const deleteLaundryHandler = useCallback(
     row => () => {
-      deleteLaundry(row.id);
+      deleteLaundry(row.id, row.clothingId);
     },
     [deleteLaundry]
   );

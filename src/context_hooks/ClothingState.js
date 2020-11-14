@@ -59,7 +59,8 @@ export const ClothingProvider = ({ children }) => {
           thumbnail,
           usagePerLaundry,
           dateBought,
-          notes
+          notes,
+          useTotal: 0
         })
       })
       .then(resp => resp.json())
@@ -75,7 +76,7 @@ export const ClothingProvider = ({ children }) => {
 
   // update clothing
   const updateClothing = useCallback(
-    async (id, subcategory, label, thumbnail, usagePerLaundry, dateBought, notes, callback) => {
+    async (id, subcategory, label, thumbnail, usagePerLaundry, dateBought, notes, useTotal, callback) => {
       fetch(`${updateClothingURL}/${id}`, {
         method: 'PUT',
         mode: 'cors',
@@ -92,7 +93,8 @@ export const ClothingProvider = ({ children }) => {
           thumbnail,
           usagePerLaundry,
           dateBought,
-          notes
+          notes,
+          useTotal
         })
       }).then(() => {
         setClothes(prev => {
@@ -104,6 +106,7 @@ export const ClothingProvider = ({ children }) => {
                 clothing.thumbnail = thumbnail; 
                 clothing.usagePerLaundry = +usagePerLaundry; 
                 clothing.dateBought = dateBought; 
+                clothing.useTotal = useTotal;
                 clothing.notes = notes; 
               }
               return clothing;
@@ -117,6 +120,23 @@ export const ClothingProvider = ({ children }) => {
       })
     },
     [setClothes, currentUser]
+  );
+
+  const updateTotalUsageOfClothing = useCallback(
+    (addend, id) => {
+      setClothes(prev => {
+        return prev.map(
+          clothing => {
+            if (clothing.id === id) {
+              const clothingCopy = { ...clothing, useTotal: +(clothing.useTotal + addend) };
+              return clothingCopy;
+            }
+            return clothing;
+          }
+        );
+      });
+    },
+    [setClothes]
   );
 
   // delete clothing
@@ -147,7 +167,8 @@ export const ClothingProvider = ({ children }) => {
         getClothes,
         addClothing,
         updateClothing,
-        deleteClothing
+        deleteClothing,
+        updateTotalUsageOfClothing
       }}
     >
       {children}

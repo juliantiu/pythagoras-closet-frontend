@@ -9,12 +9,12 @@ function Body() {
   return (
     <Container fluid>
       <Row className="mb-3 sticky-accordion d-block">
-        <Col xs={12}>
+        <Col xs={12}> 
           <ActionButtonsAccordion />
         </Col>
       </Row>
       <Row>
-        <Col xs={12}>
+        <Col xs={12} className="pb-3">
           <ClosetDivision />
         </Col>
       </Row>

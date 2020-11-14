@@ -22,7 +22,7 @@ const deleteLaundryURL = `${hostname}/${deleteLaundryURI}`;
 export const LaundryContext = createContext({});
 
 export const LaundryProvider = ({ children }) => {
-  const { clothes } = useClothingState();
+  const { clothes, updateTotalUsageOfClothing } = useClothingState();
   const { currentUser } = useAuthState();
   const [laundry, setLaundry] = useState(undefined);
 
@@ -97,6 +97,7 @@ export const LaundryProvider = ({ children }) => {
           prevCopy.unshift(data);
           return prevCopy;
         });
+        updateTotalUsageOfClothing(1, clothingId);
         callback();
       })
       .catch(() => {
@@ -104,7 +105,7 @@ export const LaundryProvider = ({ children }) => {
         callback();
       })
     },
-    [setLaundry, currentUser]
+    [updateTotalUsageOfClothing, setLaundry, currentUser]
   );
 
   // update laundry
@@ -121,19 +122,22 @@ export const LaundryProvider = ({ children }) => {
 
   // delete laundry
   const deleteLaundry = useCallback(
-    id => {
-      fetch(`${deleteLaundryURL}/${id}`, {
+    (id, clothingId) => {
+      fetch(`${deleteLaundryURL}/${id}?clothingId=${clothingId}`, {
         method: 'delete',
         mode: 'cors',
         cache: 'no-cache',
         credentials:'same-origin'
       })
-      .then(() => setLaundry(prev => prev.filter(deletedLaundry => deletedLaundry.id !== id)))
+      .then(() => {
+        setLaundry(prev => prev.filter(deletedLaundry => deletedLaundry.id !== id))
+        updateTotalUsageOfClothing(-1, clothingId);
+      })
       .catch(() => {
         alert('Failed to delete laundry');
       });
     },
-    [setLaundry]
+    [setLaundry, updateTotalUsageOfClothing]
   );
 
   return (

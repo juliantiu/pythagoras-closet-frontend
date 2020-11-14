@@ -94,7 +94,7 @@ function InfoModal(props) {
   const onSave = useCallback(
     () => {
       setIsLoading(true);
-      updateClothing(selectedClothing.id, selectedSubcategory, label, thumbnailString, usagePerLaundry, dateBought, notes, onSaveOrDeleteCallback);
+      updateClothing(selectedClothing.id, selectedSubcategory, label, thumbnailString, usagePerLaundry, dateBought, notes, selectedClothing.useTotal, onSaveOrDeleteCallback);
     }, [
       selectedClothing,
       selectedSubcategory,
@@ -229,6 +229,10 @@ function InfoModal(props) {
           <Form.Group>
             <Form.Label>Date Bought</Form.Label>
             <Form.Control type="date" onChange={onDateBoughtChange} value={dateBought} />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Times Used</Form.Label>
+            <Form.Control type="number" value={selectedClothing?.useTotal} readOnly={true} />
           </Form.Group>
           <Form.Group>
             <Form.Label>Thumbnail</Form.Label>

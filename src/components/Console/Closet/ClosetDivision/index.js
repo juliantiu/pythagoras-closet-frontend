@@ -169,9 +169,7 @@ export default function ClosetDivision() {
             <Fragment key={`closet-category-${category.id}`}>
               <Accordion>
                 <Card>
-                  <Card.Header>
-                    <Accordion.Toggle as={Button} variant="light" eventKey={category.id}><h3>{category.name}</h3></Accordion.Toggle>
-                  </Card.Header>
+                  <Accordion.Toggle as={Card.Header} eventKey={category.id}><h3>{category.name}</h3></Accordion.Toggle>
                   <Accordion.Collapse eventKey={category.id}>
                     <Card.Body>{generateSubcategoriesJSX(category.subcategories, onShowIntermediateModal, usageLookup)}</Card.Body>
                   </Accordion.Collapse>

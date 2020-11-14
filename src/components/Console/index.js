@@ -62,7 +62,7 @@ function Body() {
       getWasherFromUids(lastMonthDate.toJSDate());
     },
     [getWasherFromUids]
-  )
+  );
 
   if (categories === undefined || subcategories === undefined || clothes === undefined) {
     return (
